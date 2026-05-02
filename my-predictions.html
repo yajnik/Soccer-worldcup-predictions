@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Predictions · World Cup 26</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    :root{--green:#1a4d2e;--green-mid:#245c38;--gold:#c9a84c;--gold-lt:#e8c97a;--cream:#faf6ed;--white:#ffffff;--text:#1c1c1c;--muted:#7a7a7a;--border:rgba(201,168,76,0.18);--radius:16px;--shadow-md:0 8px 36px rgba(0,0,0,0.11);--red:#c0392b;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+    nav{background:var(--green);padding:0 20px;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,.08);}
+    .nav-logo{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--white);padding:14px 0;margin-right:20px;}
+    .nav-logo em{color:var(--gold);font-style:italic;}
+    .nav-links{display:flex;gap:2px;flex:1;overflow-x:auto;}
+    .nav-link{display:inline-flex;align-items:center;gap:5px;padding:14px 14px;font-size:.82rem;font-weight:600;color:rgba(255,255,255,.55);text-decoration:none;border-bottom:3px solid transparent;transition:color .2s,border-color .2s;white-space:nowrap;}
+    .nav-link:hover{color:rgba(255,255,255,.85);}
+    .nav-link.active{color:var(--white);border-bottom-color:var(--gold);}
+    .nav-auth{margin-left:auto;padding-left:12px;display:flex;align-items:center;gap:8px;}
+    .nav-user{font-size:.72rem;color:rgba(255,255,255,.5);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .nav-so{background:transparent;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.5);font-family:'DM Sans',sans-serif;font-size:.72rem;padding:5px 11px;border-radius:50px;cursor:pointer;white-space:nowrap;}
+    header{background:var(--green);padding:40px 24px 32px;text-align:center;position:relative;overflow:hidden;}
+    header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 40%,rgba(201,168,76,.12) 0%,transparent 55%);pointer-events:none;}
+    .header-inner{position:relative;z-index:1;}
+    .badge{display:inline-block;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.4);color:var(--gold-lt);font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;padding:4px 14px;border-radius:50px;margin-bottom:12px;}
+    header h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,5vw,2.4rem);font-weight:900;color:var(--white);line-height:1.1;margin-bottom:5px;}
+    header h1 em{color:var(--gold);font-style:italic;}
+    header p.sub{color:rgba(255,255,255,.5);font-size:.88rem;max-width:360px;margin:0 auto;}
+    main{max-width:680px;margin:0 auto;padding:36px 16px 80px;}
+    /* SIGN-IN GATE */
+    #signin-gate{text-align:center;}
+    .signin-card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-md);padding:40px 28px;margin-top:8px;}
+    .signin-icon{font-size:2.8rem;margin-bottom:12px;}
+    .signin-card h2{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--green);margin-bottom:8px;}
+    .signin-card p{font-size:.85rem;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+    #g_id_signin{display:flex;justify-content:center;}
+    /* USER BAR */
+    #user-bar{display:none;background:var(--white);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-md);padding:16px 20px;margin-bottom:20px;display:none;align-items:center;gap:12px;}
+    .ub-avatar{width:36px;height:36px;border-radius:50%;background:var(--green);color:var(--white);font-size:.9rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .ub-info{flex:1;}
+    .ub-name{font-weight:700;color:var(--green);font-size:.95rem;}
+    .ub-email{font-size:.75rem;color:var(--muted);}
+    .ub-count{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--gold);line-height:1;}
+    .ub-count-lbl{font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
+    /* SEC HEAD */
+    .sec-head{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+    .sec-head .pip{width:8px;height:8px;background:var(--gold);border-radius:50%;flex-shrink:0;}
+    .sec-head h2{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--green);}
+    .sec-head .rule{flex:1;height:1px;background:linear-gradient(to right,rgba(201,168,76,.35),transparent);}
+    /* COMPACT LIST */
+    .pred-list-wrap{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-md);overflow:hidden;margin-bottom:24px;}
+    .pred-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid rgba(201,168,76,.08);transition:background .15s;}
+    .pred-row:last-child{border-bottom:none;}
+    .pred-row:hover{background:rgba(201,168,76,.04);}
+    .pr-match{font-weight:700;font-size:.88rem;color:var(--green);}
+    .pr-date{font-size:.68rem;color:var(--muted);margin-top:1px;}
+    .pr-score{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text);white-space:nowrap;text-align:center;}
+    .pr-score .pr-teams{font-family:'DM Sans',sans-serif;font-size:.6rem;font-weight:600;letter-spacing:.5px;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:1px;}
+    .pr-status{font-size:.6rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:3px 9px;border-radius:50px;white-space:nowrap;}
+    .pr-status.pending{background:rgba(26,77,46,.08);color:var(--muted);}
+    .pr-status.correct{background:rgba(39,174,96,.12);color:#1a7a42;}
+    .pr-status.wrong{background:rgba(192,57,43,.08);color:var(--red);}
+    .pr-winner{font-size:.68rem;color:var(--muted);margin-top:2px;text-align:right;}
+    /* LIST HEADER */
+    .pred-list-header{background:#f2ede0;padding:8px 16px;display:grid;grid-template-columns:1fr auto auto;gap:10px;border-bottom:2px solid var(--border);}
+    .plh-cell{font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+    .plh-cell.center{text-align:center;}
+    .plh-cell.right{text-align:right;}
+    /* SPINNER */
+    .spinner-wrap{padding:52px 20px;text-align:center;}
+    .spinner{width:28px;height:28px;border:3px solid rgba(26,77,46,.1);border-top-color:var(--green);border-radius:50%;animation:spin .85s linear infinite;margin:0 auto 12px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .spinner-wrap p{font-size:.83rem;color:var(--muted);}
+    .empty-state{text-align:center;padding:52px 20px;}
+    .empty-icon{font-size:3rem;margin-bottom:12px;}
+    .empty-state h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--green);margin-bottom:8px;}
+    .empty-state p{font-size:.84rem;color:var(--muted);margin-bottom:20px;line-height:1.6;}
+    .btn-predict{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--gold),#a8722a);color:var(--white);font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;padding:13px 28px;border-radius:50px;text-decoration:none;box-shadow:0 4px 20px rgba(201,168,76,.35);}
+    footer{text-align:center;padding:22px 20px;background:var(--green);color:rgba(255,255,255,.35);font-size:.74rem;}
+    footer span{color:var(--gold);}
+
+    /* MOBILE BOTTOM TAB BAR */
+    .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--green);border-top:1px solid rgba(255,255,255,.1);z-index:100;padding-bottom:env(safe-area-inset-bottom,0);}
+    .mobile-nav-inner{display:flex;align-items:stretch;}
+    .mob-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 8px;text-decoration:none;color:rgba(255,255,255,.45);font-size:.58rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;gap:3px;border-top:3px solid transparent;transition:color .2s,border-color .2s;}
+    .mob-tab .ti{font-size:1.15rem;line-height:1;}
+    .mob-tab.active{color:var(--gold-lt);border-top-color:var(--gold);}
+    @media(max-width:600px){
+      .mobile-nav{display:block;}
+      main{padding-bottom:90px!important;}
+      nav .nav-links{display:none;}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">⚽ World Cup <em>26</em></div>
+  <div class="nav-links">
+    <a class="nav-link" href="index.html">🏆 Leaderboard</a>
+    <a class="nav-link" href="predict.html">✏️ Predict</a>
+    <a class="nav-link active" href="my-predictions.html">👤 My Picks</a>
+    
+  </div>
+  <div class="nav-auth">
+    <span class="nav-user" id="nav-email"></span>
+    <button class="nav-so" id="nav-so" style="display:none" onclick="signOut()">Sign Out</button>
+  </div>
+</nav>
+
+<header>
+  <div class="header-inner">
+    <div class="badge">⚽ FIFA World Cup 2026</div>
+    <h1>My <em>Predictions</em></h1>
+    <p class="sub">All your picks in one place.</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- SIGN-IN GATE -->
+  <div id="signin-gate">
+    <div class="signin-card">
+      <div class="signin-icon">👤</div>
+      <h2>Sign in to see your picks</h2>
+      <p>Your predictions are linked to your Google account. Sign in to see everything you've submitted.</p>
+      <div id="g_id_onload"
+           data-client_id="1093952507077-ncbvifr2lc3enmacttv8934tb2reavcu.apps.googleusercontent.com"
+           data-callback="handleGoogleSignIn"
+           data-auto_select="true"
+           data-cancel_on_tap_outside="false">
+      </div>
+      <div id="g_id_signin" class="g_id_signin"
+           data-type="standard" data-size="large"
+           data-theme="outline" data-text="sign_in_with"
+           data-shape="pill" data-logo_alignment="left">
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="content-view" style="display:none">
+
+    <!-- User banner -->
+    <div id="user-bar">
+      <div class="ub-avatar" id="ub-avatar">?</div>
+      <div class="ub-info">
+        <div class="ub-name" id="ub-name">—</div>
+        <div class="ub-email" id="ub-email">—</div>
+      </div>
+      <div style="text-align:right">
+        <div class="ub-count" id="ub-count">—</div>
+        <div class="ub-count-lbl">predictions</div>
+      </div>
+    </div>
+
+    <!-- List -->
+    <div class="sec-head">
+      <div class="pip"></div>
+      <h2>Your Picks</h2>
+      <div class="rule"></div>
+    </div>
+
+    <div class="spinner-wrap" id="loading-wrap">
+      <div class="spinner"></div>
+      <p>Loading your predictions…</p>
+    </div>
+
+    <div id="pred-list"></div>
+
+    <div class="empty-state" id="empty-state" style="display:none">
+      <div class="empty-icon">🔮</div>
+      <h3>No Predictions Yet</h3>
+      <p>You haven't submitted any predictions yet. Jump in before the next match!</p>
+      <a class="btn-predict" href="predict.html">✏️ Submit a Prediction</a>
+    </div>
+
+  </div>
+
+</main>
+
+<footer>
+  World Cup Predictions &nbsp;·&nbsp; <span>FIFA 2026</span> &nbsp;·&nbsp; Predictions close before kick-off
+</footer>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8Y7cN45cngyLFGz9LkqQnc3nCmOy39Rzi-BqTVVMRab1tIWci4sC86ZNsN2Rm0f2e/exec';
+
+let currentUser = null;
+
+function handleGoogleSignIn(response) {
+localStorage.setItem('wc_google_token', response.credential); // ADD THIS  
+const payload = JSON.parse(atob(response.credential.split('.')[1]));
+  currentUser = { email: payload.email, name: payload.name || payload.email.split('@')[0] };
+  localStorage.setItem('wc_user_email', currentUser.email);
+  localStorage.setItem('wc_user_name',  currentUser.name);
+  showContent();
+}
+
+function showContent() {
+  document.getElementById('signin-gate').style.display  = 'none';
+  document.getElementById('content-view').style.display = 'block';
+  const bar = document.getElementById('user-bar');
+  bar.style.display = 'flex';
+  document.getElementById('ub-avatar').textContent = currentUser.name.charAt(0).toUpperCase();
+  document.getElementById('ub-name').textContent   = currentUser.name;
+  document.getElementById('ub-email').textContent  = currentUser.email;
+  document.getElementById('nav-email').textContent = currentUser.email;
+  document.getElementById('nav-so').style.display  = 'block';
+  loadMyPredictions();
+}
+
+function signOut() {
+localStorage.removeItem('wc_google_token');   // ADD THIS 
+ localStorage.removeItem('wc_user_email');
+  localStorage.removeItem('wc_user_name');
+  currentUser = null;
+  document.getElementById('content-view').style.display = 'none';
+  document.getElementById('signin-gate').style.display  = 'block';
+  document.getElementById('nav-email').textContent = '';
+  document.getElementById('nav-so').style.display  = 'none';
+  if (window.google) google.accounts.id.disableAutoSelect();
+}
+
+async function loadMyPredictions() {
+  if (predictionsLoaded) return;
+  predictionsLoaded = true;
+  try {
+    const url  = APPS_SCRIPT_URL + '?action=getMyPredictions&email=' + encodeURIComponent(currentUser.email) + '&nocache=' + Date.now();
+    const res  = await fetch(url, { redirect: 'follow' });
+    const data = await res.json();
+    renderPredictions(data.predictions || []);
+  } catch(e) {
+    console.error(e);
+    renderPredictions([]);
+  }
+}
+
+function renderPredictions(preds) {
+  document.getElementById('loading-wrap').style.display = 'none';
+
+  if (!preds.length) {
+    document.getElementById('empty-state').style.display = 'block';
+    document.getElementById('ub-count').textContent = '0';
+    return;
+  }
+
+  // Deduplicate — keep only first submission per match
+  const seen = new Set();
+  const deduped = [];
+  [...preds].reverse().forEach(p => {
+    if (!seen.has(p.matchId)) { seen.add(p.matchId); deduped.push(p); }
+  });
+  // Sort by matchId descending (latest match number first)
+  preds = deduped.sort((a, b) => Number(b.matchId) - Number(a.matchId));
+
+  document.getElementById('ub-count').textContent = preds.length;
+  const list = document.getElementById('pred-list');
+  list.innerHTML = '';  // clear before render  // clear before render — prevents double render
+
+  // Build list wrapper with header
+  const wrap = document.createElement('div');
+  wrap.className = 'pred-list-wrap';
+  wrap.innerHTML = `
+    <div class="pred-list-header">
+      <div class="plh-cell">Match</div>
+      <div class="plh-cell center">Your Score</div>
+      <div class="plh-cell right">Result</div>
+    </div>`;
+
+  preds.forEach(p => {
+    let statusClass = 'pending', statusText = '⏳';
+    if (p.points !== '' && p.points !== undefined) {
+      statusClass = Number(p.points) > 0 ? 'correct' : 'wrong';
+      statusText  = Number(p.points) > 0 ? '+' + p.points + ' pts' : '✗ Miss';
+    }
+
+    const row = document.createElement('div');
+    row.className = 'pred-row';
+    row.innerHTML = `
+      <div>
+        <div class="pr-match">${esc(p.matchLabel || p.matchId)}</div>
+        <div class="pr-date">${esc(p.timestamp || '')}</div>
+      </div>
+      <div>
+        <div class="pr-score">
+          <div class="pr-teams"><span>${esc(p.team1)}</span><span>${esc(p.team2)}</span></div>
+          ${esc(String(p.score1))} – ${esc(String(p.score2))}
+        </div>
+        <div class="pr-winner" style="font-size:.62rem;color:var(--muted);text-align:center;">${esc(p.winner)}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="pr-status ${statusClass}">${statusText}</div>
+        ${p.actualScore ? `<div style="font-size:.62rem;color:var(--muted);margin-top:3px;">Actual: ${esc(p.actualScore)}</div>` : ''}
+      </div>
+    `;
+    wrap.appendChild(row);
+  });
+  list.appendChild(wrap);
+}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── AUTO-RESTORE SESSION ────────────────────────────────────────────────────
+let predictionsLoaded = false;
+(function restoreSession() {
+  const storedToken = localStorage.getItem('wc_google_token');
+  if (!storedToken) return;
+  try {
+    const payload = JSON.parse(atob(storedToken.split('.')[1]));
+    currentUser = { email: payload.email, name: payload.name || payload.email.split('@')[0] };
+    localStorage.setItem('wc_user_email', currentUser.email);
+    localStorage.setItem('wc_user_name',  currentUser.name);
+    showContent();
+  } catch(e) {
+    localStorage.removeItem('wc_google_token');
+  }
+})();
+</script>
+
+<!-- MOBILE BOTTOM TAB BAR -->
+<div class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <a class="mob-tab" href="index.html"><span class="ti">🏆</span>Leaderboard</a>
+    <a class="mob-tab" href="predict.html"><span class="ti">✏️</span>Predict</a>
+    <a class="mob-tab active" href="my-predictions.html"><span class="ti">👤</span>My Picks</a>
+  </div>
+</div>
+</body>
+</html>

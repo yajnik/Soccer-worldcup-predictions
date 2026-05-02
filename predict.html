@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Submit Prediction · World Cup 26</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    :root{--green:#1a4d2e;--green-mid:#245c38;--gold:#c9a84c;--gold-lt:#e8c97a;--cream:#faf6ed;--white:#ffffff;--text:#1c1c1c;--muted:#7a7a7a;--border:rgba(201,168,76,0.18);--radius:16px;--shadow-md:0 8px 36px rgba(0,0,0,0.11);--red:#c0392b;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+    nav{background:var(--green);padding:0 20px;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,0.08);}
+    .nav-logo{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--white);padding:14px 0;margin-right:20px;}
+    .nav-logo em{color:var(--gold);font-style:italic;}
+    .nav-links{display:flex;gap:2px;flex:1;overflow-x:auto;}
+    .nav-link{display:inline-flex;align-items:center;gap:5px;padding:14px 14px;font-size:.82rem;font-weight:600;color:rgba(255,255,255,.55);text-decoration:none;border-bottom:3px solid transparent;transition:color .2s,border-color .2s;white-space:nowrap;}
+    .nav-link:hover{color:rgba(255,255,255,.85);}
+    .nav-link.active{color:var(--white);border-bottom-color:var(--gold);}
+    .nav-auth{margin-left:auto;display:flex;align-items:center;gap:8px;padding-left:12px;}
+    .nav-user{font-size:.72rem;color:rgba(255,255,255,.5);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .nav-sign-out{background:transparent;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.5);font-family:'DM Sans',sans-serif;font-size:.72rem;padding:5px 11px;border-radius:50px;cursor:pointer;white-space:nowrap;}
+    header{background:var(--green);padding:40px 24px 32px;text-align:center;position:relative;overflow:hidden;}
+    header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 60%,rgba(201,168,76,.12) 0%,transparent 55%);pointer-events:none;}
+    .header-inner{position:relative;z-index:1;}
+    .badge{display:inline-block;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.4);color:var(--gold-lt);font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;padding:4px 14px;border-radius:50px;margin-bottom:12px;}
+    header h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,5vw,2.4rem);font-weight:900;color:var(--white);line-height:1.1;margin-bottom:5px;}
+    header h1 em{color:var(--gold);font-style:italic;}
+    header p.sub{color:rgba(255,255,255,.5);font-size:.88rem;max-width:360px;margin:0 auto;}
+    main{max-width:520px;margin:0 auto;padding:32px 16px 80px;}
+    /* SIGN-IN GATE */
+    #signin-gate{text-align:center;}
+    .signin-card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-md);padding:40px 28px;margin-top:8px;}
+    .signin-icon{font-size:3rem;margin-bottom:14px;}
+    .signin-card h2{font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--green);margin-bottom:8px;}
+    .signin-card p{font-size:.86rem;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+    #g_id_signin{display:flex;justify-content:center;}
+    .signin-note{margin-top:14px;font-size:.72rem;color:#bbb;}
+    /* CARDS */
+    #form-view{display:none;}
+    .card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-md);padding:22px 20px;margin-bottom:14px;}
+    .card-title{font-family:'Playfair Display',serif;font-size:.98rem;font-weight:700;color:var(--green);margin-bottom:14px;display:flex;align-items:center;gap:9px;}
+    .card-title .num{width:22px;height:22px;border-radius:50%;background:var(--green);color:var(--white);font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .user-pill{display:flex;align-items:center;gap:10px;background:rgba(26,77,46,.05);border:1.5px solid rgba(26,77,46,.12);border-radius:50px;padding:10px 16px;}
+    .user-avatar{width:30px;height:30px;border-radius:50%;background:var(--green);color:var(--white);font-size:.82rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .user-email{font-size:.85rem;font-weight:600;color:var(--green);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .change-link{font-size:.7rem;color:var(--muted);text-decoration:underline;cursor:pointer;white-space:nowrap;}
+    label.field-label{display:block;font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+    select{width:100%;border:1.5px solid rgba(26,77,46,.15);border-radius:10px;padding:12px 36px 12px 14px;font-family:'DM Sans',sans-serif;font-size:.93rem;color:var(--text);background:var(--white);outline:none;transition:border-color .2s,box-shadow .2s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7a7a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;}
+    select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(26,77,46,.08);}
+    .field-group{margin-bottom:14px;}
+    .field-group:last-child{margin-bottom:0;}
+    /* MATCH PREVIEW */
+    #match-preview{display:none;background:linear-gradient(135deg,var(--green),var(--green-mid));border-radius:11px;padding:16px 18px;margin-top:11px;color:var(--white);}
+    #match-preview .mlabel{font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:8px;}
+    #match-preview .teams-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+    #match-preview .team-name{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--white);flex:1;text-align:center;}
+    #match-preview .vs{font-size:.72rem;font-weight:700;letter-spacing:1px;color:var(--gold);flex-shrink:0;}
+    #match-preview .meta{font-size:.7rem;color:rgba(255,255,255,.4);margin-top:5px;text-align:center;}
+    /* SCORE ENTRY */
+    .score-row{display:grid;grid-template-columns:1fr 44px 1fr;gap:10px;align-items:end;}
+    .score-team{display:flex;flex-direction:column;gap:7px;}
+    .score-team-name{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--green);text-align:center;}
+    .score-input input[type="number"]{width:100%;border:2px solid rgba(26,77,46,.15);border-radius:12px;padding:12px 6px;font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:700;color:var(--green);text-align:center;background:var(--white);outline:none;transition:border-color .2s,box-shadow .2s;appearance:textfield;-moz-appearance:textfield;}
+    .score-input input[type="number"]::-webkit-inner-spin-button,.score-input input[type="number"]::-webkit-outer-spin-button{appearance:none;}
+    .score-input input[type="number"]:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(26,77,46,.08);}
+    .score-sep{text-align:center;font-size:1.4rem;font-weight:700;color:var(--muted);padding-bottom:16px;}
+    .score-hint{font-size:.67rem;color:var(--muted);text-align:center;margin-top:9px;line-height:1.5;}
+    /* INFERRED WINNER */
+    #inferred-winner{margin-top:12px;padding:10px 14px;background:rgba(26,77,46,.06);border:1.5px solid rgba(26,77,46,.13);border-radius:9px;font-size:.83rem;color:var(--green);display:none;align-items:center;gap:8px;}
+    /* ERRORS */
+    .err-msg{background:rgba(192,57,43,.06);border:1px solid rgba(192,57,43,.2);border-radius:8px;padding:9px 12px;font-size:.8rem;color:var(--red);margin-top:8px;display:none;}
+    /* SUBMIT */
+    .submit-btn{width:100%;background:linear-gradient(135deg,var(--gold),#a8722a);color:var(--white);font-family:'DM Sans',sans-serif;font-size:.97rem;font-weight:700;padding:16px;border-radius:50px;border:none;cursor:pointer;box-shadow:0 4px 24px rgba(201,168,76,.4);transition:transform .2s,box-shadow .2s,opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;}
+    .submit-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 32px rgba(201,168,76,.5);}
+    .submit-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+    /* LOADING */
+    #loading-card{padding:36px 20px;text-align:center;}
+    .spinner{width:26px;height:26px;border:3px solid rgba(26,77,46,.1);border-top-color:var(--green);border-radius:50%;animation:spin .85s linear infinite;margin:0 auto 10px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    #loading-card p{font-size:.82rem;color:var(--muted);}
+    #no-matches{display:none;text-align:center;padding:32px 20px;}
+    #no-matches .emoji{font-size:2.5rem;margin-bottom:10px;}
+    #no-matches h3{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--green);margin-bottom:6px;}
+    #no-matches p{font-size:.83rem;color:var(--muted);}
+    /* SUCCESS */
+    #success-view{display:none;}
+    .success-card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-md);padding:36px 22px;text-align:center;}
+    .success-icon{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green-mid));display:flex;align-items:center;justify-content:center;font-size:1.9rem;margin:0 auto 16px;box-shadow:0 8px 24px rgba(26,77,46,.25);}
+    .success-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:var(--green);margin-bottom:6px;}
+    .success-sub{font-size:.86rem;color:var(--muted);margin-bottom:22px;line-height:1.6;}
+    .success-summary{background:var(--cream);border-radius:10px;padding:14px 16px;text-align:left;margin-bottom:20px;}
+    .summary-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(201,168,76,.1);font-size:.84rem;}
+    .summary-row:last-child{border-bottom:none;}
+    .summary-label{color:var(--muted);font-weight:500;}
+    .summary-value{font-weight:700;color:var(--green);}
+    .btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+    .another-btn{display:inline-flex;align-items:center;gap:7px;background:transparent;color:var(--green);border:2px solid var(--green);font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;padding:11px 24px;border-radius:50px;cursor:pointer;transition:background .2s,color .2s;}
+    .another-btn:hover{background:var(--green);color:var(--white);}
+    .home-btn{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,var(--gold),#a8722a);color:var(--white);font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;padding:11px 24px;border-radius:50px;text-decoration:none;}
+    footer{text-align:center;padding:22px 20px;background:var(--green);color:rgba(255,255,255,.35);font-size:.74rem;}
+    footer span{color:var(--gold);}
+
+    /* MOBILE BOTTOM TAB BAR */
+    .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--green);border-top:1px solid rgba(255,255,255,.1);z-index:100;padding-bottom:env(safe-area-inset-bottom,0);}
+    .mobile-nav-inner{display:flex;align-items:stretch;}
+    .mob-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 8px;text-decoration:none;color:rgba(255,255,255,.45);font-size:.58rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;gap:3px;border-top:3px solid transparent;transition:color .2s,border-color .2s;}
+    .mob-tab .ti{font-size:1.15rem;line-height:1;}
+    .mob-tab.active{color:var(--gold-lt);border-top-color:var(--gold);}
+    @media(max-width:600px){
+      .mobile-nav{display:block;}
+      main{padding-bottom:90px!important;}
+      nav .nav-links{display:none;}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">⚽ World Cup <em>26</em></div>
+  <div class="nav-links">
+    <a class="nav-link" href="index.html">🏆 Leaderboard</a>
+    <a class="nav-link active" href="predict.html">✏️ Predict</a>
+    <a class="nav-link" href="my-predictions.html">👤 My Picks</a>
+  </div>
+  <div class="nav-auth">
+    <span class="nav-user" id="nav-email"></span>
+    <button class="nav-sign-out" id="nav-so" style="display:none" onclick="signOut()">Sign Out</button>
+  </div>
+</nav>
+
+<header>
+  <div class="header-inner">
+    <div class="badge">⚽ FIFA World Cup 2026</div>
+    <h1>Submit Your <em>Prediction</em></h1>
+    <p class="sub">Call the score — bragging rights await.</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- SIGN-IN GATE -->
+  <div id="signin-gate">
+    <div class="signin-card">
+      <div class="signin-icon">🔐</div>
+      <h2>Sign in to Predict</h2>
+      <p>Use your Google account. Your predictions are linked to your email — no duplicate submissions, and only you can see your picks.</p>
+      <div id="g_id_onload"
+           data-client_id="1093952507077-ncbvifr2lc3enmacttv8934tb2reavcu.apps.googleusercontent.com"
+           data-callback="handleGoogleSignIn"
+           data-auto_select="true"
+           data-cancel_on_tap_outside="false">
+      </div>
+      <div id="g_id_signin" class="g_id_signin"
+           data-type="standard" data-size="large"
+           data-theme="outline" data-text="sign_in_with"
+           data-shape="pill" data-logo_alignment="left">
+      </div>
+      <p class="signin-note">Only your name and email are used. No other Google data is accessed.</p>
+    </div>
+  </div>
+
+  <!-- FORM VIEW -->
+  <div id="form-view">
+
+    <div class="card" id="loading-card">
+      <div class="spinner"></div>
+      <p>Loading matches…</p>
+    </div>
+
+    <div id="no-matches">
+      <div class="emoji">🔒</div>
+      <h3>No Open Matches</h3>
+      <p>All prediction windows are closed. Check back before the next match!</p>
+    </div>
+
+    <div id="main-form" style="display:none">
+
+      <!-- Who you are -->
+      <div class="card">
+        <div class="card-title"><span class="num">1</span> Predicting as</div>
+        <div class="user-pill">
+          <div class="user-avatar" id="user-avatar">?</div>
+          <span class="user-email" id="user-email-display">—</span>
+          <span class="change-link" onclick="signOut()">Switch</span>
+        </div>
+      </div>
+
+      <!-- Pick match -->
+      <div class="card">
+        <div class="card-title"><span class="num">2</span> Select a Match</div>
+        <div class="field-group">
+          <label class="field-label" for="match-select">Open Matches</label>
+          <select id="match-select">
+            <option value="">— Choose a match —</option>
+          </select>
+          <div class="err-msg" id="match-err">Please select a match.</div>
+        </div>
+        <div id="match-preview">
+          <div class="mlabel">Predicting</div>
+          <div class="teams-row">
+            <div class="team-name" id="prev-t1">—</div>
+            <div class="vs">VS</div>
+            <div class="team-name" id="prev-t2">—</div>
+          </div>
+          <div class="meta" id="prev-meta"></div>
+        </div>
+      </div>
+
+      <!-- Score -->
+      <div class="card" id="prediction-card" style="display:none">
+        <div class="card-title"><span class="num">3</span> Predict the Score</div>
+
+        <div class="field-group">
+          <div class="score-row">
+            <div class="score-team">
+              <div class="score-team-name" id="slabel1">—</div>
+              <div class="score-input">
+                <input type="number" id="score1" min="0" max="99" placeholder="0"/>
+              </div>
+            </div>
+            <div class="score-sep">—</div>
+            <div class="score-team">
+              <div class="score-team-name" id="slabel2">—</div>
+              <div class="score-input">
+                <input type="number" id="score2" min="0" max="99" placeholder="0"/>
+              </div>
+            </div>
+          </div>
+          <div class="score-hint">Enter goals for each team · Winner is inferred from the score automatically</div>
+          <div class="err-msg" id="score-err">Please enter a valid score for both teams (0 or more).</div>
+        </div>
+
+        <!-- Live inferred winner -->
+        <div id="inferred-winner">
+          <span>🏆</span>
+          <span style="font-weight:600">Your pick:</span>
+          <span id="inferred-text" style="font-family:'Playfair Display',serif;font-weight:700;font-size:.95rem;"></span>
+        </div>
+
+        <div class="err-msg" id="submit-err"></div>
+        <button class="submit-btn" id="submit-btn" disabled>
+          <span id="submit-label">🏆 Lock In My Prediction</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="success-view">
+    <div class="success-card">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">Prediction Locked!</div>
+      <div class="success-sub">Your prediction has been saved. Good luck!</div>
+      <div class="success-summary" id="success-summary"></div>
+      <div class="btn-row">
+        <button class="another-btn" onclick="resetForm()">+ Another</button>
+        <a class="home-btn" href="my-predictions.html">👤 My Picks</a>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  World Cup Predictions &nbsp;·&nbsp; <span>FIFA 2026</span> &nbsp;·&nbsp; Predictions close before kick-off
+</footer>
+
+<script>
+
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8Y7cN45cngyLFGz9LkqQnc3nCmOy39Rzi-BqTVVMRab1tIWci4sC86ZNsN2Rm0f2e/exec';
+
+let currentUser   = null;
+let matches       = [];
+let selectedMatch = null;
+
+// ── GOOGLE SIGN-IN ───────────────────────────────────────────────────────────
+function handleGoogleSignIn(response) {
+localStorage.setItem('wc_google_token', response.credential); // ADD THIS 
+ const payload = JSON.parse(atob(response.credential.split('.')[1]));
+  currentUser = { email: payload.email, name: payload.name || payload.email.split('@')[0] };
+  localStorage.setItem('wc_user_email', currentUser.email);
+  localStorage.setItem('wc_user_name',  currentUser.name);
+  showFormView();
+}
+
+function showFormView() {
+  document.getElementById('signin-gate').style.display = 'none';
+  document.getElementById('form-view').style.display   = 'block';
+  document.getElementById('user-email-display').textContent = currentUser.email;
+  document.getElementById('user-avatar').textContent = currentUser.name.charAt(0).toUpperCase();
+  document.getElementById('nav-email').textContent   = currentUser.email;
+  document.getElementById('nav-so').style.display    = 'block';
+  if (!matches.length) loadMatches();
+}
+
+function signOut() {
+localStorage.removeItem('wc_google_token');   // ADD THIS
+ localStorage.removeItem('wc_user_email');
+  localStorage.removeItem('wc_user_name');
+  currentUser = null;
+  document.getElementById('form-view').style.display   = 'none';
+  document.getElementById('success-view').style.display = 'none';
+  document.getElementById('signin-gate').style.display = 'block';
+  document.getElementById('nav-email').textContent = '';
+  document.getElementById('nav-so').style.display  = 'none';
+  if (window.google) google.accounts.id.disableAutoSelect();
+}
+
+// ── LOAD MATCHES ─────────────────────────────────────────────────────────────
+async function loadMatches() {
+  if (matchesLoaded) return;
+  matchesLoaded = true;
+  try {
+    const res  = await fetch(APPS_SCRIPT_URL + '?action=getMatches&nocache=' + Date.now(), { redirect: 'follow' });
+    const data = await res.json();
+    matches = data.matches || [];
+  } catch(e) { matches = []; }
+
+  // Fetch match IDs this user has already predicted
+  let predictedIds = new Set();
+  try {
+    const res2  = await fetch(APPS_SCRIPT_URL + '?action=getMyMatchIds&email=' + encodeURIComponent(currentUser.email) + '&nocache=' + Date.now(), { redirect: 'follow' });
+    const data2 = await res2.json();
+    predictedIds = new Set((data2.matchIds || []).map(String));
+  } catch(e) { /* non-fatal, show all matches if this fails */ }
+
+  document.getElementById('loading-card').style.display = 'none';
+
+  // Filter out already-predicted matches
+  const available = matches.filter(m => !predictedIds.has(String(m.id)));
+
+  if (!available.length && !matches.length) {
+    document.getElementById('no-matches').style.display = 'block';
+    return;
+  }
+
+  const sel = document.getElementById('match-select');
+
+  if (!available.length) {
+    // All open matches already predicted
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = 'All open matches predicted!';
+    sel.appendChild(opt);
+    sel.disabled = true;
+    document.getElementById('main-form').style.display = 'block';
+    return;
+  }
+
+  available.forEach(m => {
+    const o = document.createElement('option');
+    o.value = m.id;
+    o.textContent = m.label + (m.date ? '  ·  ' + m.date : '');
+    sel.appendChild(o);
+  });
+  document.getElementById('main-form').style.display = 'block';
+}
+
+// ── MATCH SELECT ─────────────────────────────────────────────────────────────
+document.getElementById('match-select').addEventListener('change', function() {
+  selectedMatch = matches.find(m => String(m.id) === this.value) || null;
+  const preview = document.getElementById('match-preview');
+  const card    = document.getElementById('prediction-card');
+  if (!selectedMatch) { preview.style.display = 'none'; card.style.display = 'none'; return; }
+  document.getElementById('prev-t1').textContent   = selectedMatch.team1;
+  document.getElementById('prev-t2').textContent   = selectedMatch.team2;
+  document.getElementById('prev-meta').textContent = selectedMatch.date || '';
+  preview.style.display = 'block';
+  document.getElementById('slabel1').textContent = selectedMatch.team1;
+  document.getElementById('slabel2').textContent = selectedMatch.team2;
+  document.getElementById('score1').value = '0';
+  document.getElementById('score2').value = '0';
+  card.style.display = 'block';
+  onScoreInput();   // show inferred winner immediately with default 0-0
+});
+
+// ── SCORE INPUT → INFER WINNER ───────────────────────────────────────────────
+function onScoreInput() {
+  if (!selectedMatch) return;
+  const s1 = document.getElementById('score1').value;
+  const s2 = document.getElementById('score2').value;
+  const iw = document.getElementById('inferred-winner');
+  if (s1 === '' || s2 === '') { iw.style.display = 'none'; updateSubmit(); return; }
+  const n1 = parseInt(s1,10), n2 = parseInt(s2,10);
+  const w = n1 > n2 ? selectedMatch.team1 + ' to win'
+          : n2 > n1 ? selectedMatch.team2 + ' to win'
+          : 'Draw';
+  document.getElementById('inferred-text').textContent = w;
+  iw.style.display = 'flex';
+  updateSubmit();
+}
+
+function updateSubmit() {
+  const s1 = document.getElementById('score1').value;
+  const s2 = document.getElementById('score2').value;
+  document.getElementById('submit-btn').disabled =
+    !selectedMatch || s1 === '' || s2 === '' || Number(s1) < 0 || Number(s2) < 0;
+}
+
+document.getElementById('score1').addEventListener('input', onScoreInput);
+document.getElementById('score2').addEventListener('input', onScoreInput);
+
+// ── SUBMIT ───────────────────────────────────────────────────────────────────
+document.getElementById('submit-btn').addEventListener('click', async () => {
+  document.querySelectorAll('.err-msg').forEach(e => e.style.display = 'none');
+  const s1 = document.getElementById('score1').value;
+  const s2 = document.getElementById('score2').value;
+  if (s1 === '' || s2 === '' || Number(s1) < 0 || Number(s2) < 0) {
+    document.getElementById('score-err').style.display = 'block'; return;
+  }
+  const n1 = parseInt(s1,10), n2 = parseInt(s2,10);
+  const winner = n1 > n2 ? selectedMatch.team1 : n2 > n1 ? selectedMatch.team2 : 'Draw';
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  document.getElementById('submit-label').textContent = '⏳ Saving…';
+
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST', headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        action: 'submitPrediction',
+        playerEmail: currentUser.email,
+        playerName:  currentUser.name,
+        matchId:    selectedMatch.id,
+        matchLabel: selectedMatch.label,
+        team1: selectedMatch.team1, team2: selectedMatch.team2,
+        score1: n1, score2: n2, winner,
+      }),
+    });
+    const data = await res.json();
+       if (data.duplicate) {
+  // Show a specific duplicate message instead of generic error
+  document.getElementById('submit-err').textContent = 
+    '\u26A0\uFE0F You already predicted for this match. Go to My Picks to see your entry.';
+  document.getElementById('submit-err').style.display = 'block';
+  btn.disabled = false;
+  document.getElementById('submit-label').textContent = '🏆 Lock In My Prediction';
+  return;
+    }
+    if (!data.success) throw new Error(data.error);
+    showSuccess(selectedMatch.team1, selectedMatch.team2, s1, s2, winner, selectedMatch.label);
+  } catch(e) {
+    console.error(e);
+    document.getElementById('submit-err').style.display = 'block';
+    btn.disabled = false;
+    document.getElementById('submit-label').textContent = '🏆 Lock In My Prediction';
+  }
+});
+
+function showSuccess(t1, t2, s1, s2, winner, label) {
+  document.getElementById('form-view').style.display    = 'none';
+  document.getElementById('success-view').style.display = 'block';
+  document.getElementById('success-summary').innerHTML = `
+    <div class="summary-row"><span class="summary-label">Player</span><span class="summary-value">${esc(currentUser.name)}</span></div>
+    <div class="summary-row"><span class="summary-label">Match</span><span class="summary-value">${esc(label)}</span></div>
+    <div class="summary-row"><span class="summary-label">Score</span><span class="summary-value">${esc(t1)} ${s1} – ${s2} ${esc(t2)}</span></div>
+    <div class="summary-row"><span class="summary-label">Winner pick</span><span class="summary-value">${esc(winner)}</span></div>
+  `;
+}
+
+function resetForm() {
+  document.getElementById('success-view').style.display = 'none';
+  document.getElementById('form-view').style.display    = 'block';
+  document.getElementById('match-select').value = '';
+  document.getElementById('match-preview').style.display   = 'none';
+  document.getElementById('prediction-card').style.display = 'none';
+  document.getElementById('inferred-winner').style.display = 'none';
+  document.getElementById('score1').value = '';
+  document.getElementById('score2').value = '';
+  document.getElementById('inferred-winner').style.display = 'none';
+  document.getElementById('submit-btn').disabled = true;
+  document.getElementById('submit-label').textContent = '🏆 Lock In My Prediction';
+}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── AUTO-RESTORE SESSION ────────────────────────────────────────────────────
+// Runs synchronously on load — if token exists, skip sign-in gate immediately
+// This prevents the gate flash and the need to sign in on every navigation.
+let matchesLoaded = false;
+(function restoreSession() {
+  const storedToken = localStorage.getItem('wc_google_token');
+  if (!storedToken) return;
+  try {
+    const payload = JSON.parse(atob(storedToken.split('.')[1]));
+    // Token stores identity only — no expiry check needed for our use case
+    currentUser = { email: payload.email, name: payload.name || payload.email.split('@')[0] };
+    localStorage.setItem('wc_user_email', currentUser.email);
+    localStorage.setItem('wc_user_name',  currentUser.name);
+    showFormView();
+  } catch(e) {
+    localStorage.removeItem('wc_google_token');
+  }
+})();
+</script>
+
+<!-- MOBILE BOTTOM TAB BAR -->
+<div class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <a class="mob-tab" href="index.html"><span class="ti">🏆</span>Leaderboard</a>
+    <a class="mob-tab active" href="predict.html"><span class="ti">✏️</span>Predict</a>
+    <a class="mob-tab" href="my-predictions.html"><span class="ti">👤</span>My Picks</a>
+  </div>
+</div>
+</body>
+</html>
