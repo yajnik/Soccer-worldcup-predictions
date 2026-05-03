@@ -6,6 +6,14 @@
   <title>Submit Prediction · World Cup 26</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+// If already signed in, cancel GSI as soon as it loads to prevent interference
+window.addEventListener('load', function() {
+  if (localStorage.getItem('wc_user_email') && window.google && google.accounts) {
+    google.accounts.id.cancel();
+  }
+});
+</script>
   <style>
     :root{--green:#1a4d2e;--green-mid:#245c38;--gold:#c9a84c;--gold-lt:#e8c97a;--cream:#faf6ed;--white:#ffffff;--text:#1c1c1c;--muted:#7a7a7a;--border:rgba(201,168,76,0.18);--radius:16px;--shadow-md:0 8px 36px rgba(0,0,0,0.11);--red:#c0392b;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -58,18 +66,12 @@
     #match-preview .vs{font-size:.72rem;font-weight:700;letter-spacing:1px;color:var(--gold);flex-shrink:0;}
     #match-preview .meta{font-size:.7rem;color:rgba(255,255,255,.4);margin-top:5px;text-align:center;}
     /* SCORE ENTRY */
-    /* SCORE WHEEL PICKER */
-    .score-row{display:grid;grid-template-columns:1fr 44px 1fr;gap:10px;align-items:flex-start;}
-    .score-team{display:flex;flex-direction:column;align-items:center;gap:6px;}
+    .score-row{display:grid;grid-template-columns:1fr 44px 1fr;gap:10px;align-items:end;}
+    .score-team{display:flex;flex-direction:column;gap:7px;}
     .score-team-name{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--green);text-align:center;}
-    .wheel{width:72px;height:180px;overflow:hidden;position:relative;border:1.5px solid rgba(26,77,46,.2);border-radius:12px;background:var(--white);cursor:grab;-webkit-tap-highlight-color:transparent;touch-action:none;}
-    .wheel:active{cursor:grabbing;}
-    .wheel-mask-top{position:absolute;top:0;left:0;right:0;height:56px;background:linear-gradient(to bottom,rgba(255,255,255,1) 20%,rgba(255,255,255,0));z-index:2;pointer-events:none;}
-    .wheel-mask-bot{position:absolute;bottom:0;left:0;right:0;height:56px;background:linear-gradient(to top,rgba(255,255,255,1) 20%,rgba(255,255,255,0));z-index:2;pointer-events:none;}
-    .wheel-sel{position:absolute;top:50%;left:6px;right:6px;height:48px;transform:translateY(-50%);border-radius:8px;background:rgba(26,77,46,.07);border:1.5px solid rgba(26,77,46,.15);z-index:1;pointer-events:none;}
-    .wheel-inner{display:flex;flex-direction:column;align-items:center;will-change:transform;}
-    .wheel-item{height:48px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:rgba(26,77,46,.25);width:100%;user-select:none;}
-    .wheel-item.sel{color:var(--green);font-size:1.9rem;}
+    .score-input input[type="number"]{width:100%;border:2px solid rgba(26,77,46,.15);border-radius:12px;padding:12px 6px;font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:700;color:var(--green);text-align:center;background:var(--white);outline:none;transition:border-color .2s,box-shadow .2s;appearance:textfield;-moz-appearance:textfield;}
+    .score-input input[type="number"]::-webkit-inner-spin-button,.score-input input[type="number"]::-webkit-outer-spin-button{appearance:none;}
+    .score-input input[type="number"]:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(26,77,46,.08);}
     .score-sep{text-align:center;font-size:1.4rem;font-weight:700;color:var(--muted);padding-bottom:16px;}
     .score-hint{font-size:.67rem;color:var(--muted);text-align:center;margin-top:9px;line-height:1.5;}
     /* INFERRED WINNER */
@@ -119,15 +121,6 @@
       nav .nav-links{display:none;}
     }
   </style>
-<script>
-// Hide sign-in gate immediately if session exists — prevents flash
-if (localStorage.getItem('wc_user_email')) {
-  document.addEventListener('DOMContentLoaded', function() {
-    var gate = document.getElementById('signin-gate');
-    if (gate) gate.style.display = 'none';
-  });
-}
-</script>
 </head>
 <body>
 
@@ -163,7 +156,7 @@ if (localStorage.getItem('wc_user_email')) {
       <div id="g_id_onload"
            data-client_id="1093952507077-ncbvifr2lc3enmacttv8934tb2reavcu.apps.googleusercontent.com"
            data-callback="handleGoogleSignIn"
-           data-auto_select="false"
+           data-auto_select="true"
            data-cancel_on_tap_outside="false">
       </div>
       <div id="g_id_signin" class="g_id_signin"
@@ -230,27 +223,19 @@ if (localStorage.getItem('wc_user_email')) {
           <div class="score-row">
             <div class="score-team">
               <div class="score-team-name" id="slabel1">—</div>
-              <div class="wheel" id="wheel1">
-                <div class="wheel-mask-top"></div>
-                <div class="wheel-sel"></div>
-                <div class="wheel-mask-bot"></div>
-                <div class="wheel-inner" id="winn1"></div>
+              <div class="score-input">
+                <input type="number" id="score1" min="0" max="99" placeholder="0"/>
               </div>
             </div>
-            <div class="score-sep" style="padding-top:80px;">—</div>
+            <div class="score-sep">—</div>
             <div class="score-team">
               <div class="score-team-name" id="slabel2">—</div>
-              <div class="wheel" id="wheel2">
-                <div class="wheel-mask-top"></div>
-                <div class="wheel-sel"></div>
-                <div class="wheel-mask-bot"></div>
-                <div class="wheel-inner" id="winn2"></div>
+              <div class="score-input">
+                <input type="number" id="score2" min="0" max="99" placeholder="0"/>
               </div>
             </div>
           </div>
-          <input type="hidden" id="score1" value="0"/>
-          <input type="hidden" id="score2" value="0"/>
-          <div class="score-hint">Scroll each wheel to set goals · 0–10</div>
+          <div class="score-hint">Enter goals for each team · Winner is inferred from the score automatically</div>
           <div class="err-msg" id="score-err">Please enter a valid score for both teams (0 or more).</div>
         </div>
 
@@ -294,21 +279,17 @@ if (localStorage.getItem('wc_user_email')) {
 
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8Y7cN45cngyLFGz9LkqQnc3nCmOy39Rzi-BqTVVMRab1tIWci4sC86ZNsN2Rm0f2e/exec';
 
-
-
 let currentUser   = null;
 let matches       = [];
 let selectedMatch = null;
 
 // ── GOOGLE SIGN-IN ───────────────────────────────────────────────────────────
 function handleGoogleSignIn(response) {
-  const payload = JSON.parse(atob(response.credential.split('.')[1]));
+localStorage.setItem('wc_google_token', response.credential); // ADD THIS 
+ const payload = JSON.parse(atob(response.credential.split('.')[1]));
   currentUser = { email: payload.email, name: payload.name || payload.email.split('@')[0] };
-  // Save to localStorage immediately — these persist across page navigations
   localStorage.setItem('wc_user_email', currentUser.email);
   localStorage.setItem('wc_user_name',  currentUser.name);
-  localStorage.setItem('wc_google_token', response.credential);
-  console.log('Signed in as:', currentUser.email, '— saved to localStorage');
   showFormView();
 }
 
@@ -323,8 +304,8 @@ function showFormView() {
 }
 
 function signOut() {
-  localStorage.removeItem('wc_google_token');
-  localStorage.removeItem('wc_user_email');
+localStorage.removeItem('wc_google_token');   // ADD THIS
+ localStorage.removeItem('wc_user_email');
   localStorage.removeItem('wc_user_name');
   currentUser = null;
   document.getElementById('form-view').style.display   = 'none';
@@ -399,78 +380,11 @@ document.getElementById('match-select').addEventListener('change', function() {
   document.getElementById('slabel2').textContent = selectedMatch.team2;
   document.getElementById('score1').value = '0';
   document.getElementById('score2').value = '0';
-  wheelsBuilt = false;
-  if(document.getElementById('winn1')) document.getElementById('winn1').innerHTML='';
-  if(document.getElementById('winn2')) document.getElementById('winn2').innerHTML='';
   card.style.display = 'block';
-  ensureWheels();
   onScoreInput();   // show inferred winner immediately with default 0-0
 });
 
 // ── SCORE INPUT → INFER WINNER ───────────────────────────────────────────────
-// ── SCROLL WHEEL PICKER ──────────────────────────────────────────────────────
-const WH = 48;
-const WNUMS = [0,1,2,3,4,5,6,7,8,9,10];
-let wheelsBuilt = false;
-
-function buildWheel(wheelEl, innerId, hiddenId) {
-  const inner = document.getElementById(innerId);
-  inner.innerHTML = '';
-  let cur = 0, startY = 0, startOff = 0, off = 0;
-  let drag = false, vel = 0, lastY = 0, lastT = 0, raf = null;
-  WNUMS.forEach(n => {
-    const el = document.createElement('div');
-    el.className = 'wheel-item';
-    el.textContent = n;
-    inner.appendChild(el);
-  });
-  function getOff(v) { return -(v * WH) + (wheelEl.offsetHeight / 2 - WH / 2); }
-  function clamp(v)  { return Math.max(-(WNUMS.length-1)*WH, Math.min(0, v)); }
-  function render(o) {
-    const idx = Math.round((-o + wheelEl.offsetHeight/2 - WH/2) / WH);
-    inner.style.transform = 'translateY(' + (o + WH) + 'px)';
-    inner.querySelectorAll('.wheel-item').forEach((el,i) => {
-      el.classList.toggle('sel', i === Math.max(0, Math.min(WNUMS.length-1, idx)));
-    });
-  }
-  function snapTo(v) {
-    cur = Math.max(0, Math.min(WNUMS.length-1, v));
-    off = getOff(cur);
-    render(off);
-    document.getElementById(hiddenId).value = cur;
-    onScoreInput();
-  }
-  function onS(y) { drag=true; startY=y; startOff=off; vel=0; lastY=y; lastT=Date.now(); if(raf) cancelAnimationFrame(raf); }
-  function onM(y) {
-    if(!drag) return;
-    const now=Date.now();
-    vel=(y-lastY)/Math.max(1,now-lastT)*16; lastY=y; lastT=now;
-    off=clamp(startOff+(y-startY)); render(off);
-  }
-  function onE() {
-    drag=false;
-    function mom() {
-      if(Math.abs(vel)<0.3){ const idx=Math.round((-off+wheelEl.offsetHeight/2-WH/2)/WH); snapTo(Math.max(0,Math.min(WNUMS.length-1,idx))); return; }
-      off=clamp(off+vel); vel*=0.92; render(off); raf=requestAnimationFrame(mom);
-    }
-    mom();
-  }
-  wheelEl.addEventListener('mousedown', e=>{onS(e.clientY);e.preventDefault();});
-  window.addEventListener('mousemove',  e=>{if(drag)onM(e.clientY);});
-  window.addEventListener('mouseup',    ()=>{if(drag)onE();});
-  wheelEl.addEventListener('touchstart',e=>{onS(e.touches[0].clientY);},{passive:true});
-  wheelEl.addEventListener('touchmove', e=>{onM(e.touches[0].clientY);e.preventDefault();},{passive:false});
-  wheelEl.addEventListener('touchend',  ()=>onE());
-  snapTo(0);
-}
-
-function ensureWheels() {
-  if(wheelsBuilt) return;
-  wheelsBuilt = true;
-  buildWheel(document.getElementById('wheel1'),'winn1','score1');
-  buildWheel(document.getElementById('wheel2'),'winn2','score2');
-}
-
 function onScoreInput() {
   if (!selectedMatch) return;
   const s1 = document.getElementById('score1').value;
@@ -487,7 +401,10 @@ function onScoreInput() {
 }
 
 function updateSubmit() {
-  document.getElementById('submit-btn').disabled = !selectedMatch;
+  const s1 = document.getElementById('score1').value;
+  const s2 = document.getElementById('score2').value;
+  document.getElementById('submit-btn').disabled =
+    !selectedMatch || s1 === '' || s2 === '' || Number(s1) < 0 || Number(s2) < 0;
 }
 
 document.getElementById('score1').addEventListener('input', onScoreInput);
@@ -559,11 +476,8 @@ function resetForm() {
   document.getElementById('match-preview').style.display   = 'none';
   document.getElementById('prediction-card').style.display = 'none';
   document.getElementById('inferred-winner').style.display = 'none';
-  document.getElementById('score1').value = '0';
-  document.getElementById('score2').value = '0';
-  wheelsBuilt = false;
-  if(document.getElementById('winn1')) document.getElementById('winn1').innerHTML='';
-  if(document.getElementById('winn2')) document.getElementById('winn2').innerHTML='';
+  document.getElementById('score1').value = '';
+  document.getElementById('score2').value = '';
   document.getElementById('inferred-winner').style.display = 'none';
   document.getElementById('submit-btn').disabled = true;
   document.getElementById('submit-label').textContent = '🏆 Lock In My Prediction';
@@ -572,20 +486,19 @@ function resetForm() {
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // ── AUTO-RESTORE SESSION ────────────────────────────────────────────────────
-// Runs synchronously on load — if token exists, skip sign-in gate immediately
-// This prevents the gate flash and the need to sign in on every navigation.
 let matchesLoaded = false;
 document.addEventListener('DOMContentLoaded', function() {
-  // Restore session from stored email/name — simpler and more reliable than token parsing
   const email = localStorage.getItem('wc_user_email');
   const name  = localStorage.getItem('wc_user_name');
-  console.log('Restore check — email:', email, 'name:', name);
   if (email && name) {
     currentUser = { email: email, name: name };
     const gate = document.getElementById('signin-gate');
     if (gate) gate.style.display = 'none';
+    // Cancel GSI so it doesn't override our restored session
+    if (window.google && google.accounts && google.accounts.id) {
+      google.accounts.id.cancel();
+    }
     showFormView();
-    console.log('Session restored for:', email);
   }
 });
 </script>
