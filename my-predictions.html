@@ -93,7 +93,7 @@
     }
   </style>
 <script>
-if (localStorage.getItem('wc_google_token')) {
+if (localStorage.getItem('wc_user_email')) {
   document.addEventListener('DOMContentLoaded', function() {
     var gate = document.getElementById('signin-gate');
     if (gate) gate.style.display = 'none';
@@ -312,19 +312,18 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 
 // ── AUTO-RESTORE SESSION ────────────────────────────────────────────────────
 let predictionsLoaded = false;
-(function restoreSession() {
-  const storedToken = localStorage.getItem('wc_google_token');
-  if (!storedToken) return;
-  try {
-    const payload = JSON.parse(atob(storedToken.split('.')[1]));
-    currentUser = { email: payload.email, name: payload.name || payload.email.split('@')[0] };
-    localStorage.setItem('wc_user_email', currentUser.email);
-    localStorage.setItem('wc_user_name',  currentUser.name);
+document.addEventListener('DOMContentLoaded', function() {
+  const email = localStorage.getItem('wc_user_email');
+  const name  = localStorage.getItem('wc_user_name');
+  console.log('Restore check — email:', email, 'name:', name);
+  if (email && name) {
+    currentUser = { email: email, name: name };
+    const gate = document.getElementById('signin-gate');
+    if (gate) gate.style.display = 'none';
     showContent();
-  } catch(e) {
-    localStorage.removeItem('wc_google_token');
+    console.log('Session restored for:', email);
   }
-})();
+});
 </script>
 
 <!-- MOBILE BOTTOM TAB BAR -->
