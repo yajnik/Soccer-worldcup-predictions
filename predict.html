@@ -83,12 +83,17 @@ window.addEventListener('load', function() {
     #match-preview .vs{font-size:.72rem;font-weight:700;letter-spacing:1px;color:var(--gold);flex-shrink:0;}
     #match-preview .meta{font-size:.7rem;color:rgba(255,255,255,.4);margin-top:5px;text-align:center;}
     /* SCORE ENTRY */
-    .score-row{display:grid;grid-template-columns:1fr 44px 1fr;gap:10px;align-items:end;}
-    .score-team{display:flex;flex-direction:column;gap:7px;}
+    .score-row{display:grid;grid-template-columns:1fr 44px 1fr;gap:10px;align-items:flex-start;}
+    .score-team{display:flex;flex-direction:column;align-items:center;gap:6px;}
     .score-team-name{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--green);text-align:center;}
-    .score-input input[type="number"]{width:100%;border:2px solid rgba(26,77,46,.15);border-radius:12px;padding:12px 6px;font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:700;color:var(--green);text-align:center;background:var(--white);outline:none;transition:border-color .2s,box-shadow .2s;appearance:textfield;-moz-appearance:textfield;}
-    .score-input input[type="number"]::-webkit-inner-spin-button,.score-input input[type="number"]::-webkit-outer-spin-button{appearance:none;}
-    .score-input input[type="number"]:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(26,77,46,.08);}
+    .wheel{width:72px;height:180px;overflow:hidden;position:relative;border:1.5px solid rgba(26,77,46,.2);border-radius:12px;background:var(--white);cursor:grab;-webkit-tap-highlight-color:transparent;touch-action:none;}
+    .wheel:active{cursor:grabbing;}
+    .wheel-mask-top{position:absolute;top:0;left:0;right:0;height:56px;background:linear-gradient(to bottom,rgba(255,255,255,1) 20%,rgba(255,255,255,0));z-index:2;pointer-events:none;}
+    .wheel-mask-bot{position:absolute;bottom:0;left:0;right:0;height:56px;background:linear-gradient(to top,rgba(255,255,255,1) 20%,rgba(255,255,255,0));z-index:2;pointer-events:none;}
+    .wheel-sel{position:absolute;top:50%;left:6px;right:6px;height:48px;transform:translateY(-50%);border-radius:8px;background:rgba(26,77,46,.07);border:1.5px solid rgba(26,77,46,.15);z-index:1;pointer-events:none;}
+    .wheel-inner{display:flex;flex-direction:column;align-items:center;will-change:transform;}
+    .wheel-item{height:48px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:rgba(26,77,46,.25);width:100%;user-select:none;}
+    .wheel-item.sel{color:var(--green);font-size:1.9rem;}
     .score-sep{text-align:center;font-size:1.4rem;font-weight:700;color:var(--muted);padding-bottom:16px;}
     .score-hint{font-size:.67rem;color:var(--muted);text-align:center;margin-top:9px;line-height:1.5;}
     /* INFERRED WINNER */
@@ -235,19 +240,27 @@ window.addEventListener('load', function() {
           <div class="score-row">
             <div class="score-team">
               <div class="score-team-name" id="slabel1">—</div>
-              <div class="score-input">
-                <input type="number" id="score1" min="0" max="99" placeholder="0"/>
+              <div class="wheel" id="wheel1">
+                <div class="wheel-mask-top"></div>
+                <div class="wheel-sel"></div>
+                <div class="wheel-mask-bot"></div>
+                <div class="wheel-inner" id="winn1"></div>
               </div>
             </div>
-            <div class="score-sep">—</div>
+            <div class="score-sep" style="padding-top:80px;">—</div>
             <div class="score-team">
               <div class="score-team-name" id="slabel2">—</div>
-              <div class="score-input">
-                <input type="number" id="score2" min="0" max="99" placeholder="0"/>
+              <div class="wheel" id="wheel2">
+                <div class="wheel-mask-top"></div>
+                <div class="wheel-sel"></div>
+                <div class="wheel-mask-bot"></div>
+                <div class="wheel-inner" id="winn2"></div>
               </div>
             </div>
           </div>
-          <div class="score-hint">Enter goals for each team · Winner is inferred from the score automatically</div>
+          <input type="hidden" id="score1" value="0"/>
+          <input type="hidden" id="score2" value="0"/>
+          <div class="score-hint">Scroll each wheel to set goals · 0–10</div>
           <div class="err-msg" id="score-err">Please enter a valid score for both teams (0 or more).</div>
         </div>
 
@@ -392,11 +405,78 @@ document.getElementById('match-select').addEventListener('change', function() {
   document.getElementById('slabel2').textContent = selectedMatch.team2;
   document.getElementById('score1').value = '0';
   document.getElementById('score2').value = '0';
+  wheelsBuilt = false;
+  if(document.getElementById('winn1')) document.getElementById('winn1').innerHTML='';
+  if(document.getElementById('winn2')) document.getElementById('winn2').innerHTML='';
   card.style.display = 'block';
+  ensureWheels();
   onScoreInput();   // show inferred winner immediately with default 0-0
 });
 
 // ── SCORE INPUT → INFER WINNER ───────────────────────────────────────────────
+// ── SCROLL WHEEL PICKER ──────────────────────────────────────────────────────
+const WH = 48;
+const WNUMS = [0,1,2,3,4,5,6,7,8,9,10];
+let wheelsBuilt = false;
+
+function buildWheel(wheelEl, innerId, hiddenId) {
+  const inner = document.getElementById(innerId);
+  inner.innerHTML = '';
+  let cur = 0, startY = 0, startOff = 0, off = 0;
+  let drag = false, vel = 0, lastY = 0, lastT = 0, raf = null;
+  WNUMS.forEach(n => {
+    const el = document.createElement('div');
+    el.className = 'wheel-item';
+    el.textContent = n;
+    inner.appendChild(el);
+  });
+  function getOff(v) { return -(v * WH) + (wheelEl.offsetHeight / 2 - WH / 2); }
+  function clamp(v)  { return Math.max(-(WNUMS.length-1)*WH, Math.min(0, v)); }
+  function render(o) {
+    const idx = Math.round((-o + wheelEl.offsetHeight/2 - WH/2) / WH);
+    inner.style.transform = 'translateY(' + (o + WH) + 'px)';
+    inner.querySelectorAll('.wheel-item').forEach((el,i) => {
+      el.classList.toggle('sel', i === Math.max(0, Math.min(WNUMS.length-1, idx)));
+    });
+  }
+  function snapTo(v) {
+    cur = Math.max(0, Math.min(WNUMS.length-1, v));
+    off = getOff(cur);
+    render(off);
+    document.getElementById(hiddenId).value = cur;
+    onScoreInput();
+  }
+  function onS(y) { drag=true; startY=y; startOff=off; vel=0; lastY=y; lastT=Date.now(); if(raf) cancelAnimationFrame(raf); }
+  function onM(y) {
+    if(!drag) return;
+    const now=Date.now();
+    vel=(y-lastY)/Math.max(1,now-lastT)*16; lastY=y; lastT=now;
+    off=clamp(startOff+(y-startY)); render(off);
+  }
+  function onE() {
+    drag=false;
+    function mom() {
+      if(Math.abs(vel)<0.3){ const idx=Math.round((-off+wheelEl.offsetHeight/2-WH/2)/WH); snapTo(Math.max(0,Math.min(WNUMS.length-1,idx))); return; }
+      off=clamp(off+vel); vel*=0.92; render(off); raf=requestAnimationFrame(mom);
+    }
+    mom();
+  }
+  wheelEl.addEventListener('mousedown', e=>{onS(e.clientY);e.preventDefault();});
+  window.addEventListener('mousemove',  e=>{if(drag)onM(e.clientY);});
+  window.addEventListener('mouseup',    ()=>{if(drag)onE();});
+  wheelEl.addEventListener('touchstart',e=>{onS(e.touches[0].clientY);},{passive:true});
+  wheelEl.addEventListener('touchmove', e=>{onM(e.touches[0].clientY);e.preventDefault();},{passive:false});
+  wheelEl.addEventListener('touchend',  ()=>onE());
+  snapTo(0);
+}
+
+function ensureWheels() {
+  if(wheelsBuilt) return;
+  wheelsBuilt = true;
+  buildWheel(document.getElementById('wheel1'),'winn1','score1');
+  buildWheel(document.getElementById('wheel2'),'winn2','score2');
+}
+
 function onScoreInput() {
   if (!selectedMatch) return;
   const s1 = document.getElementById('score1').value;
@@ -413,10 +493,7 @@ function onScoreInput() {
 }
 
 function updateSubmit() {
-  const s1 = document.getElementById('score1').value;
-  const s2 = document.getElementById('score2').value;
-  document.getElementById('submit-btn').disabled =
-    !selectedMatch || s1 === '' || s2 === '' || Number(s1) < 0 || Number(s2) < 0;
+  document.getElementById('submit-btn').disabled = !selectedMatch;
 }
 
 document.getElementById('score1').addEventListener('input', onScoreInput);
@@ -488,8 +565,11 @@ function resetForm() {
   document.getElementById('match-preview').style.display   = 'none';
   document.getElementById('prediction-card').style.display = 'none';
   document.getElementById('inferred-winner').style.display = 'none';
-  document.getElementById('score1').value = '';
-  document.getElementById('score2').value = '';
+  document.getElementById('score1').value = '0';
+  document.getElementById('score2').value = '0';
+  wheelsBuilt = false;
+  if(document.getElementById('winn1')) document.getElementById('winn1').innerHTML='';
+  if(document.getElementById('winn2')) document.getElementById('winn2').innerHTML='';
   document.getElementById('inferred-winner').style.display = 'none';
   document.getElementById('submit-btn').disabled = true;
   document.getElementById('submit-label').textContent = '🏆 Lock In My Prediction';
