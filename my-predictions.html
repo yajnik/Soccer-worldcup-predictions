@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>My Predictions · World Cup 26</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  
   <style>
     :root{--green:#1a4d2e;--green-mid:#245c38;--gold:#c9a84c;--gold-lt:#e8c97a;--cream:#faf6ed;--white:#ffffff;--text:#1c1c1c;--muted:#7a7a7a;--border:rgba(201,168,76,0.18);--radius:16px;--shadow-md:0 8px 36px rgba(0,0,0,0.11);--red:#c0392b;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -132,18 +132,9 @@ if (localStorage.getItem('wc_user_email')) {
     <div class="signin-card">
       <div class="signin-icon">👤</div>
       <h2>Sign in to see your picks</h2>
-      <p>Your predictions are linked to your Google account. Sign in to see everything you've submitted.</p>
-      <div id="g_id_onload"
-           data-client_id="1093952507077-ncbvifr2lc3enmacttv8934tb2reavcu.apps.googleusercontent.com"
-           data-callback="handleGoogleSignIn"
-           data-auto_select="false"
-           data-cancel_on_tap_outside="false">
-      </div>
-      <div id="g_id_signin" class="g_id_signin"
-           data-type="standard" data-size="large"
-           data-theme="outline" data-text="sign_in_with"
-           data-shape="pill" data-logo_alignment="left">
-      </div>
+      <p>Please sign in on the Predict page first, then come back here to see your picks.</p>
+      <a href="predict.html" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--gold),#a8722a);color:var(--white);font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;padding:12px 28px;border-radius:50px;text-decoration:none;margin-top:8px;">✏️ Go to Predict & Sign In</a>
+
     </div>
   </div>
 
@@ -197,14 +188,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8Y7cN45cngyLF
 
 let currentUser = null;
 
-function handleGoogleSignIn(response) {
-localStorage.setItem('wc_google_token', response.credential); // ADD THIS  
-const payload = JSON.parse(atob(response.credential.split('.')[1]));
-  currentUser = { email: payload.email, name: payload.name || payload.email.split('@')[0] };
-  localStorage.setItem('wc_user_email', currentUser.email);
-  localStorage.setItem('wc_user_name',  currentUser.name);
-  showContent();
-}
+// Sign-in handled on predict.html only
 
 function showContent() {
   document.getElementById('signin-gate').style.display  = 'none';
