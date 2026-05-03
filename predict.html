@@ -6,14 +6,6 @@
   <title>Submit Prediction · World Cup 26</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script>
-// If already signed in, cancel GSI as soon as it loads to prevent interference
-window.addEventListener('load', function() {
-  if (localStorage.getItem('wc_user_email') && window.google && google.accounts) {
-    google.accounts.id.cancel();
-  }
-});
-</script>
   <style>
     :root{--green:#1a4d2e;--green-mid:#245c38;--gold:#c9a84c;--gold-lt:#e8c97a;--cream:#faf6ed;--white:#ffffff;--text:#1c1c1c;--muted:#7a7a7a;--border:rgba(201,168,76,0.18);--radius:16px;--shadow-md:0 8px 36px rgba(0,0,0,0.11);--red:#c0392b;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -148,7 +140,13 @@ window.addEventListener('load', function() {
 <main>
 
   <!-- SIGN-IN GATE -->
-  <div id="signin-gate">
+  <div id="signin-gate" style="display:none">
+    <script>
+    // Show sign-in gate only if no session — runs immediately as HTML parses
+    if (!localStorage.getItem('wc_user_email')) {
+      document.getElementById('signin-gate').style.display = 'block';
+    }
+    </script>
     <div class="signin-card">
       <div class="signin-icon">🔐</div>
       <h2>Sign in to Predict</h2>
@@ -170,6 +168,16 @@ window.addEventListener('load', function() {
 
   <!-- FORM VIEW -->
   <div id="form-view">
+    <script>
+    // Restore session inline — runs before DOMContentLoaded
+    (function() {
+      var email = localStorage.getItem('wc_user_email');
+      var name  = localStorage.getItem('wc_user_name');
+      if (email && name) {
+        window._restoredUser = { email: email, name: name };
+      }
+    })();
+    </script>
 
     <div class="card" id="loading-card">
       <div class="spinner"></div>
@@ -485,19 +493,12 @@ function resetForm() {
 
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// ── AUTO-RESTORE SESSION ────────────────────────────────────────────────────
+// ── SESSION RESTORE ──────────────────────────────────────────────────────────
 let matchesLoaded = false;
 document.addEventListener('DOMContentLoaded', function() {
-  const email = localStorage.getItem('wc_user_email');
-  const name  = localStorage.getItem('wc_user_name');
-  if (email && name) {
-    currentUser = { email: email, name: name };
-    const gate = document.getElementById('signin-gate');
-    if (gate) gate.style.display = 'none';
-    // Cancel GSI so it doesn't override our restored session
-    if (window.google && google.accounts && google.accounts.id) {
-      google.accounts.id.cancel();
-    }
+  if (window._restoredUser) {
+    currentUser = window._restoredUser;
+    try { if (window.google) google.accounts.id.cancel(); } catch(e) {}
     showFormView();
   }
 });
