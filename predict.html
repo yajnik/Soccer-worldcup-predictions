@@ -6,6 +6,23 @@
   <title>Submit Prediction · World Cup 26</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+// Initialize GSI manually only when no session exists
+window.addEventListener('load', function() {
+  if (localStorage.getItem('wc_user_email')) return; // already signed in, skip GSI
+  if (!window.google) return;
+  google.accounts.id.initialize({
+    client_id: '1093952507077-ncbvifr2lc3enmacttv8934tb2reavcu.apps.googleusercontent.com',
+    callback: handleGoogleSignIn,
+    auto_select: false,
+    cancel_on_tap_outside: true
+  });
+  google.accounts.id.renderButton(
+    document.getElementById('g_id_signin'),
+    { type: 'standard', size: 'large', theme: 'outline', text: 'sign_in_with', shape: 'pill' }
+  );
+});
+</script>
   <style>
     :root{--green:#1a4d2e;--green-mid:#245c38;--gold:#c9a84c;--gold-lt:#e8c97a;--cream:#faf6ed;--white:#ffffff;--text:#1c1c1c;--muted:#7a7a7a;--border:rgba(201,168,76,0.18);--radius:16px;--shadow-md:0 8px 36px rgba(0,0,0,0.11);--red:#c0392b;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -140,23 +157,12 @@
 <main>
 
   <!-- SIGN-IN GATE -->
-  <div id="signin-gate" style="display:none">
-    <script>
-    // Show sign-in gate only if no session — runs immediately as HTML parses
-    if (!localStorage.getItem('wc_user_email')) {
-      document.getElementById('signin-gate').style.display = 'block';
-    }
-    </script>
+  <div id="signin-gate">
     <div class="signin-card">
       <div class="signin-icon">🔐</div>
       <h2>Sign in to Predict</h2>
       <p>Use your Google account. Your predictions are linked to your email — no duplicate submissions, and only you can see your picks.</p>
-      <div id="g_id_onload"
-           data-client_id="1093952507077-ncbvifr2lc3enmacttv8934tb2reavcu.apps.googleusercontent.com"
-           data-callback="handleGoogleSignIn"
-           data-auto_select="true"
-           data-cancel_on_tap_outside="false">
-      </div>
+
       <div id="g_id_signin" class="g_id_signin"
            data-type="standard" data-size="large"
            data-theme="outline" data-text="sign_in_with"
@@ -168,16 +174,6 @@
 
   <!-- FORM VIEW -->
   <div id="form-view">
-    <script>
-    // Restore session inline — runs before DOMContentLoaded
-    (function() {
-      var email = localStorage.getItem('wc_user_email');
-      var name  = localStorage.getItem('wc_user_name');
-      if (email && name) {
-        window._restoredUser = { email: email, name: name };
-      }
-    })();
-    </script>
 
     <div class="card" id="loading-card">
       <div class="spinner"></div>
@@ -495,10 +491,21 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 
 // ── SESSION RESTORE ──────────────────────────────────────────────────────────
 let matchesLoaded = false;
+(function() {
+  var email = localStorage.getItem('wc_user_email');
+  var name  = localStorage.getItem('wc_user_name');
+  if (email && name) {
+    currentUser = { email: email, name: name };
+    var gate = document.getElementById('signin-gate');
+    if (gate) gate.style.display = 'none';
+    var fv = document.getElementById('form-view');
+    if (fv) fv.style.display = 'block';
+  }
+})();
+
+// After DOM ready, complete the session restore
 document.addEventListener('DOMContentLoaded', function() {
-  if (window._restoredUser) {
-    currentUser = window._restoredUser;
-    try { if (window.google) google.accounts.id.cancel(); } catch(e) {}
+  if (currentUser) {
     showFormView();
   }
 });
