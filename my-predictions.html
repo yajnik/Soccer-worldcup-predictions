@@ -304,7 +304,7 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 
 // ── AUTO-RESTORE SESSION ────────────────────────────────────────────────────
 let predictionsLoaded = false;
-(function restoreSession() {
+document.addEventListener('DOMContentLoaded', function() {
   const storedToken = localStorage.getItem('wc_google_token');
   if (!storedToken) return;
   try {
@@ -314,9 +314,10 @@ let predictionsLoaded = false;
     localStorage.setItem('wc_user_name',  currentUser.name);
     showContent();
   } catch(e) {
-    localStorage.removeItem('wc_google_token');
+    console.error('Token restore failed:', e);
+    // DO NOT delete token on error — keep for retry
   }
-})();
+});
 </script>
 
 <!-- MOBILE BOTTOM TAB BAR -->

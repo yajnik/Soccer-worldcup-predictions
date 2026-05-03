@@ -203,11 +203,6 @@
   <div class="header-inner">
     <div class="badge">⚽ FIFA World Cup 2026</div>
     <h1>World Cup <em>Predictions</em></h1>
-    <p class="sub">Predict the scores, track the points, own the leaderboard.</p>
-    <div class="header-btns">
-      <a class="btn" href="predict.html">✏️ Submit Prediction</a>
-      <a class="btn-ghost" href="my-predictions.html">👤 My Predictions</a>
-    </div>
   </div>
 </header>
 
@@ -429,6 +424,7 @@ if (storedEmail || storedToken) {
   document.getElementById('nav-sign-btn').textContent = 'Sign Out';
   document.getElementById('nav-sign-btn').onclick = () => {
     // Clear ALL auth tokens so predict/my-predictions don't auto-restore
+    localStorage.removeItem('wc_google_token');
     localStorage.removeItem('wc_google_token');
     localStorage.removeItem('wc_user_email');
     localStorage.removeItem('wc_user_name');
