@@ -92,6 +92,14 @@
       nav .nav-links{display:none;}
     }
   </style>
+<script>
+if (localStorage.getItem('wc_google_token')) {
+  document.addEventListener('DOMContentLoaded', function() {
+    var gate = document.getElementById('signin-gate');
+    if (gate) gate.style.display = 'none';
+  });
+}
+</script>
 </head>
 <body>
 
@@ -128,7 +136,7 @@
       <div id="g_id_onload"
            data-client_id="1093952507077-ncbvifr2lc3enmacttv8934tb2reavcu.apps.googleusercontent.com"
            data-callback="handleGoogleSignIn"
-           data-auto_select="true"
+           data-auto_select="false"
            data-cancel_on_tap_outside="false">
       </div>
       <div id="g_id_signin" class="g_id_signin"
@@ -304,7 +312,7 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 
 // ── AUTO-RESTORE SESSION ────────────────────────────────────────────────────
 let predictionsLoaded = false;
-document.addEventListener('DOMContentLoaded', function() {
+(function restoreSession() {
   const storedToken = localStorage.getItem('wc_google_token');
   if (!storedToken) return;
   try {
@@ -314,10 +322,9 @@ document.addEventListener('DOMContentLoaded', function() {
     localStorage.setItem('wc_user_name',  currentUser.name);
     showContent();
   } catch(e) {
-    console.error('Token restore failed:', e);
-    // DO NOT delete token on error — keep for retry
+    localStorage.removeItem('wc_google_token');
   }
-});
+})();
 </script>
 
 <!-- MOBILE BOTTOM TAB BAR -->
