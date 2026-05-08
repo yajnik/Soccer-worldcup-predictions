@@ -191,7 +191,7 @@
     <a class="nav-link active" href="index.html">🏆 Leaderboard</a>
     <a class="nav-link" href="predict.html">✏️ Predict</a>
     <a class="nav-link" href="my-predictions.html">👤 My Predictions</a>
-     
+    <a class="nav-link" href="funstats.html">📊 Fun Stats</a>
   </div>
   <div class="nav-auth">
     <span class="nav-user" id="nav-user-email" style="display:none"></span>
@@ -221,13 +221,7 @@
     </div>
   </div>
 
-  <!-- Tabs -->
-  <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('leaderboard',this)">🏆 Leaderboard</button>
-    <button class="tab-btn" onclick="switchTab('stats',this)">📊 Fun Stats</button>
-  </div>
-
-  <!-- LEADERBOARD TAB -->
+  <!-- LEADERBOARD -->
   <div class="tab-panel active" id="tab-leaderboard">
 
     <div class="sec-head reveal">
@@ -267,22 +261,6 @@
     </div>
   </div>
 
-  <!-- STATS TAB -->
-  <div class="tab-panel" id="tab-stats">
-    <div class="sec-head reveal">
-      <div class="pip"></div>
-      <h2>Fun Stats</h2>
-      <div class="rule"></div>
-    </div>
-
-    <div class="coming-soon" style="background:var(--white);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-md);padding:52px 24px;">
-      <div class="cs-icon">📈</div>
-      <h3>Stats Unlocking Soon</h3>
-      <p>Favourite teams, bold score predictions, upset calls — all will appear here as matches are played.</p>
-      <span class="coming-badge">Activates mid-tournament</span>
-    </div>
-  </div>
-
 </main>
 
 <footer>
@@ -291,14 +269,6 @@
 
 <script>
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8Y7cN45cngyLFGz9LkqQnc3nCmOy39Rzi-BqTVVMRab1tIWci4sC86ZNsN2Rm0f2e/exec';
-
-// ── TAB SWITCHING ────────────────────────────────────────────────────────────
-function switchTab(id, btn) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
-  btn.classList.add('active');
-}
 
 // ── LOAD LEADERBOARD ─────────────────────────────────────────────────────────
 async function loadData() {
@@ -442,6 +412,7 @@ loadData();
     <a class="mob-tab active" href="index.html"><span class="ti">🏆</span>Leaderboard</a>
     <a class="mob-tab" href="predict.html"><span class="ti">✏️</span>Predict</a>
     <a class="mob-tab" href="my-predictions.html"><span class="ti">👤</span>My Picks</a>
+    <a class="mob-tab" href="funstats.html"><span class="ti">📊</span>Fun Stats</a>
   </div>
 </div>
 </body>
