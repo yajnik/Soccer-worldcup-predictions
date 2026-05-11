@@ -88,11 +88,13 @@ window.addEventListener('load', function() {
     .score-team-name{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--green);text-align:center;}
     .wheel{width:72px;height:180px;overflow:hidden;position:relative;border:1.5px solid rgba(26,77,46,.2);border-radius:12px;background:var(--white);cursor:grab;-webkit-tap-highlight-color:transparent;touch-action:none;}
     .wheel:active{cursor:grabbing;}
-    .wheel-mask-top{position:absolute;top:0;left:0;right:0;height:56px;background:linear-gradient(to bottom,rgba(255,255,255,1) 20%,rgba(255,255,255,0));z-index:2;pointer-events:none;}
-    .wheel-mask-bot{position:absolute;bottom:0;left:0;right:0;height:56px;background:linear-gradient(to top,rgba(255,255,255,1) 20%,rgba(255,255,255,0));z-index:2;pointer-events:none;}
-    .wheel-sel{position:absolute;top:50%;left:6px;right:6px;height:48px;transform:translateY(-50%);border-radius:8px;background:rgba(26,77,46,.07);border:1.5px solid rgba(26,77,46,.15);z-index:1;pointer-events:none;}
+    .wheel-mask-top{position:absolute;top:0;left:0;right:0;height:66px;background:linear-gradient(to bottom,rgba(255,255,255,1) 40%,rgba(255,255,255,0));z-index:2;pointer-events:none;}
+    .wheel-mask-bot{position:absolute;bottom:0;left:0;right:0;height:66px;background:linear-gradient(to top,rgba(255,255,255,1) 40%,rgba(255,255,255,0));z-index:2;pointer-events:none;}
+    /* Two clean lines bracketing the selected item — much clearer than a shaded box */
+    .wheel-sel-top{position:absolute;top:calc(50% - 24px);left:8px;right:8px;height:1.5px;background:var(--green);opacity:0.35;z-index:3;pointer-events:none;border-radius:1px;}
+    .wheel-sel-bot{position:absolute;top:calc(50% + 24px);left:8px;right:8px;height:1.5px;background:var(--green);opacity:0.35;z-index:3;pointer-events:none;border-radius:1px;}
     .wheel-inner{display:flex;flex-direction:column;align-items:center;will-change:transform;}
-    .wheel-item{height:48px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:rgba(26,77,46,.25);width:100%;user-select:none;}
+    .wheel-item{height:48px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:rgba(26,77,46,.22);width:100%;user-select:none;transition:color .12s,font-size .12s;}
     .wheel-item.sel{color:var(--green);font-size:1.9rem;}
     .score-sep{text-align:center;font-size:1.4rem;font-weight:700;color:var(--muted);padding-bottom:16px;}
     .score-hint{font-size:.67rem;color:var(--muted);text-align:center;margin-top:9px;line-height:1.5;}
@@ -243,7 +245,8 @@ window.addEventListener('load', function() {
               <div class="score-team-name" id="slabel1">—</div>
               <div class="wheel" id="wheel1">
                 <div class="wheel-mask-top"></div>
-                <div class="wheel-sel"></div>
+                <div class="wheel-sel-top"></div>
+                <div class="wheel-sel-bot"></div>
                 <div class="wheel-mask-bot"></div>
                 <div class="wheel-inner" id="winn1"></div>
               </div>
@@ -253,7 +256,8 @@ window.addEventListener('load', function() {
               <div class="score-team-name" id="slabel2">—</div>
               <div class="wheel" id="wheel2">
                 <div class="wheel-mask-top"></div>
-                <div class="wheel-sel"></div>
+                <div class="wheel-sel-top"></div>
+                <div class="wheel-sel-bot"></div>
                 <div class="wheel-mask-bot"></div>
                 <div class="wheel-inner" id="winn2"></div>
               </div>
@@ -431,15 +435,15 @@ function buildWheel(wheelEl, innerId, hiddenId) {
     el.textContent = n;
     inner.appendChild(el);
   });
-  function getOff(v) { return -(v * WH) + (wheelEl.offsetHeight / 2 - WH / 2); }
-  function clamp(v)  { return Math.max(-(WNUMS.length-1)*WH, Math.min(0, v)); }
   function render(o) {
     const idx = Math.round((-o + wheelEl.offsetHeight/2 - WH/2) / WH);
-    inner.style.transform = 'translateY(' + (o + WH) + 'px)';
+    inner.style.transform = 'translateY(' + o + 'px)';
     inner.querySelectorAll('.wheel-item').forEach((el,i) => {
       el.classList.toggle('sel', i === Math.max(0, Math.min(WNUMS.length-1, idx)));
     });
   }
+  function getOff(v) { return -(v * WH) + (wheelEl.offsetHeight / 2 - WH / 2); }
+  function clamp(v)  { return Math.min(getOff(0), Math.max(getOff(WNUMS.length - 1), v)); }
   function snapTo(v) {
     cur = Math.max(0, Math.min(WNUMS.length-1, v));
     off = getOff(cur);
@@ -560,6 +564,21 @@ function showSuccess(t1, t2, s1, s2, winner, label) {
 }
 
 function resetForm() {
+  // Remove the just-submitted match from the dropdown so it can't be re-picked
+  if (selectedMatch) {
+    const sel = document.getElementById('match-select');
+    const opt = sel.querySelector('option[value="' + selectedMatch.id + '"]');
+    if (opt) opt.remove();
+    // If no options left (besides the placeholder), show "all predicted" state
+    const remaining = sel.querySelectorAll('option[value]:not([value=""])');
+    if (remaining.length === 0) {
+      const placeholder = sel.querySelector('option[value=""]');
+      if (placeholder) placeholder.textContent = 'All open matches predicted!';
+      sel.disabled = true;
+    }
+  }
+  selectedMatch = null;
+
   document.getElementById('success-view').style.display = 'none';
   document.getElementById('form-view').style.display    = 'block';
   document.getElementById('match-select').value = '';
@@ -571,7 +590,6 @@ function resetForm() {
   wheelsBuilt = false;
   if(document.getElementById('winn1')) document.getElementById('winn1').innerHTML='';
   if(document.getElementById('winn2')) document.getElementById('winn2').innerHTML='';
-  document.getElementById('inferred-winner').style.display = 'none';
   document.getElementById('submit-btn').disabled = true;
   document.getElementById('submit-label').textContent = '🏆 Lock In My Prediction';
 }
