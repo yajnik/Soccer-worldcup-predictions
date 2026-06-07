@@ -309,6 +309,44 @@ window.addEventListener('load', function() {
 
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8Y7cN45cngyLFGz9LkqQnc3nCmOy39Rzi-BqTVVMRab1tIWci4sC86ZNsN2Rm0f2e/exec';
 
+// ── TEAM FLAGS & NAMES ───────────────────────────────────────────────────────
+const TEAM_INFO = {
+  MEX:{flag:'🇲🇽',name:'Mexico'},RSA:{flag:'🇿🇦',name:'South Africa'},
+  KOR:{flag:'🇰🇷',name:'South Korea'},CZE:{flag:'🇨🇿',name:'Czechia'},
+  CAN:{flag:'🇨🇦',name:'Canada'},BIH:{flag:'🇧🇦',name:'Bosnia & Herz.'},
+  USA:{flag:'🇺🇸',name:'USA'},PAR:{flag:'🇵🇾',name:'Paraguay'},
+  QAT:{flag:'🇶🇦',name:'Qatar'},SUI:{flag:'🇨🇭',name:'Switzerland'},
+  BRA:{flag:'🇧🇷',name:'Brazil'},MAR:{flag:'🇲🇦',name:'Morocco'},
+  HAI:{flag:'🇭🇹',name:'Haiti'},SCO:{flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',name:'Scotland'},
+  AUS:{flag:'🇦🇺',name:'Australia'},TUR:{flag:'🇹🇷',name:'Turkey'},
+  GER:{flag:'🇩🇪',name:'Germany'},CUW:{flag:'🇨🇼',name:'Curaçao'},
+  NED:{flag:'🇳🇱',name:'Netherlands'},JPN:{flag:'🇯🇵',name:'Japan'},
+  CIV:{flag:'🇨🇮',name:"Côte d'Ivoire"},ECU:{flag:'🇪🇨',name:'Ecuador'},
+  SWE:{flag:'🇸🇪',name:'Sweden'},TUN:{flag:'🇹🇳',name:'Tunisia'},
+  ESP:{flag:'🇪🇸',name:'Spain'},CPV:{flag:'🇨🇻',name:'Cape Verde'},
+  BEL:{flag:'🇧🇪',name:'Belgium'},EGY:{flag:'🇪🇬',name:'Egypt'},
+  KSA:{flag:'🇸🇦',name:'Saudi Arabia'},URU:{flag:'🇺🇾',name:'Uruguay'},
+  NZL:{flag:'🇳🇿',name:'New Zealand'},FRA:{flag:'🇫🇷',name:'France'},
+  TAN:{flag:'🇹🇿',name:'Tanzania'},ARG:{flag:'🇦🇷',name:'Argentina'},
+  CHI:{flag:'🇨🇱',name:'Chile'},POR:{flag:'🇵🇹',name:'Portugal'},
+  CRC:{flag:'🇨🇷',name:'Costa Rica'},ENG:{flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',name:'England'},
+  CMR:{flag:'🇨🇲',name:'Cameroon'},ITA:{flag:'🇮🇹',name:'Italy'},
+  ALB:{flag:'🇦🇱',name:'Albania'},COL:{flag:'🇨🇴',name:'Colombia'},
+  GUA:{flag:'🇬🇹',name:'Guatemala'},DEN:{flag:'🇩🇰',name:'Denmark'},
+  SEN:{flag:'🇸🇳',name:'Senegal'},CHN:{flag:'🇨🇳',name:'China'},
+  NGA:{flag:'🇳🇬',name:'Nigeria'},PAN:{flag:'🇵🇦',name:'Panama'},
+  VEN:{flag:'🇻🇪',name:'Venezuela'},BOL:{flag:'🇧🇴',name:'Bolivia'},
+  IRN:{flag:'🇮🇷',name:'Iran'},IRQ:{flag:'🇮🇶',name:'Iraq'},
+  NOR:{flag:'🇳🇴',name:'Norway'},POL:{flag:'🇵🇱',name:'Poland'},
+  SRB:{flag:'🇷🇸',name:'Serbia'},CRO:{flag:'🇭🇷',name:'Croatia'},
+  UKR:{flag:'🇺🇦',name:'Ukraine'},SVK:{flag:'🇸🇰',name:'Slovakia'},
+  ROU:{flag:'🇷🇴',name:'Romania'},HUN:{flag:'🇭🇺',name:'Hungary'},
+  GRE:{flag:'🇬🇷',name:'Greece'},AUT:{flag:'🇦🇹',name:'Austria'},
+};
+function teamFlag(c){return(TEAM_INFO[c]||{}).flag||'🏳️';}
+function teamName(c){return(TEAM_INFO[c]||{}).name||c;}
+function teamDisplay(c){return teamFlag(c)+' '+teamName(c);}
+
 let currentUser   = null;
 let matches       = [];
 let selectedMatch = null;
@@ -390,7 +428,11 @@ async function loadMatches() {
   available.forEach(m => {
     const o = document.createElement('option');
     o.value = m.id;
-    o.textContent = m.label + (m.date ? '  ·  ' + m.date : '');
+    const parts = m.match ? m.match.split('-') : [];
+    const f1 = parts[0] ? teamFlag(parts[0].trim()) : '';
+    const f2 = parts[1] ? teamFlag(parts[1].trim()) : '';
+    const teamStr = (f1 && f2) ? f1+' '+(parts[0]||'')+' vs '+f2+' '+(parts[1]||'') : m.label;
+    o.textContent = teamStr + (m.date ? '  ·  ' + m.date : '');
     sel.appendChild(o);
   });
   document.getElementById('main-form').style.display = 'block';
@@ -402,12 +444,12 @@ document.getElementById('match-select').addEventListener('change', function() {
   const preview = document.getElementById('match-preview');
   const card    = document.getElementById('prediction-card');
   if (!selectedMatch) { preview.style.display = 'none'; card.style.display = 'none'; return; }
-  document.getElementById('prev-t1').textContent   = selectedMatch.team1;
-  document.getElementById('prev-t2').textContent   = selectedMatch.team2;
+  document.getElementById('prev-t1').textContent   = teamDisplay(selectedMatch.team1);
+  document.getElementById('prev-t2').textContent   = teamDisplay(selectedMatch.team2);
   document.getElementById('prev-meta').textContent = selectedMatch.date || '';
   preview.style.display = 'block';
-  document.getElementById('slabel1').textContent = selectedMatch.team1;
-  document.getElementById('slabel2').textContent = selectedMatch.team2;
+  document.getElementById('slabel1').textContent = teamDisplay(selectedMatch.team1);
+  document.getElementById('slabel2').textContent = teamDisplay(selectedMatch.team2);
   document.getElementById('score1').value = '0';
   document.getElementById('score2').value = '0';
   wheelsBuilt = false;
@@ -489,9 +531,9 @@ function onScoreInput() {
   const iw = document.getElementById('inferred-winner');
   if (s1 === '' || s2 === '') { iw.style.display = 'none'; updateSubmit(); return; }
   const n1 = parseInt(s1,10), n2 = parseInt(s2,10);
-  const w = n1 > n2 ? selectedMatch.team1 + ' to win'
-          : n2 > n1 ? selectedMatch.team2 + ' to win'
-          : 'Draw';
+  const w = n1 > n2 ? teamDisplay(selectedMatch.team1) + ' to win'
+          : n2 > n1 ? teamDisplay(selectedMatch.team2) + ' to win'
+          : '🤝 Draw';
   document.getElementById('inferred-text').textContent = w;
   iw.style.display = 'flex';
   updateSubmit();
@@ -558,8 +600,8 @@ function showSuccess(t1, t2, s1, s2, winner, label) {
   document.getElementById('success-summary').innerHTML = `
     <div class="summary-row"><span class="summary-label">Player</span><span class="summary-value">${esc(currentUser.name)}</span></div>
     <div class="summary-row"><span class="summary-label">Match</span><span class="summary-value">${esc(label)}</span></div>
-    <div class="summary-row"><span class="summary-label">Score</span><span class="summary-value">${esc(t1)} ${s1} – ${s2} ${esc(t2)}</span></div>
-    <div class="summary-row"><span class="summary-label">Winner pick</span><span class="summary-value">${esc(winner)}</span></div>
+    <div class="summary-row"><span class="summary-label">Score</span><span class="summary-value">${teamDisplay(t1)} ${s1} – ${s2} ${teamDisplay(t2)}</span></div>
+    <div class="summary-row"><span class="summary-label">Winner pick</span><span class="summary-value">${winner === 'Draw' ? '🤝 Draw' : teamDisplay(winner)}</span></div>
   `;
 }
 

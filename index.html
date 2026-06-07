@@ -270,6 +270,44 @@
 <script>
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8Y7cN45cngyLFGz9LkqQnc3nCmOy39Rzi-BqTVVMRab1tIWci4sC86ZNsN2Rm0f2e/exec';
 
+// ── TEAM FLAGS & NAMES ───────────────────────────────────────────────────────
+const TEAM_INFO = {
+  MEX:{flag:'🇲🇽',name:'Mexico'},RSA:{flag:'🇿🇦',name:'South Africa'},
+  KOR:{flag:'🇰🇷',name:'South Korea'},CZE:{flag:'🇨🇿',name:'Czechia'},
+  CAN:{flag:'🇨🇦',name:'Canada'},BIH:{flag:'🇧🇦',name:'Bosnia & Herz.'},
+  USA:{flag:'🇺🇸',name:'USA'},PAR:{flag:'🇵🇾',name:'Paraguay'},
+  QAT:{flag:'🇶🇦',name:'Qatar'},SUI:{flag:'🇨🇭',name:'Switzerland'},
+  BRA:{flag:'🇧🇷',name:'Brazil'},MAR:{flag:'🇲🇦',name:'Morocco'},
+  HAI:{flag:'🇭🇹',name:'Haiti'},SCO:{flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',name:'Scotland'},
+  AUS:{flag:'🇦🇺',name:'Australia'},TUR:{flag:'🇹🇷',name:'Turkey'},
+  GER:{flag:'🇩🇪',name:'Germany'},CUW:{flag:'🇨🇼',name:'Curaçao'},
+  NED:{flag:'🇳🇱',name:'Netherlands'},JPN:{flag:'🇯🇵',name:'Japan'},
+  CIV:{flag:'🇨🇮',name:"Côte d'Ivoire"},ECU:{flag:'🇪🇨',name:'Ecuador'},
+  SWE:{flag:'🇸🇪',name:'Sweden'},TUN:{flag:'🇹🇳',name:'Tunisia'},
+  ESP:{flag:'🇪🇸',name:'Spain'},CPV:{flag:'🇨🇻',name:'Cape Verde'},
+  BEL:{flag:'🇧🇪',name:'Belgium'},EGY:{flag:'🇪🇬',name:'Egypt'},
+  KSA:{flag:'🇸🇦',name:'Saudi Arabia'},URU:{flag:'🇺🇾',name:'Uruguay'},
+  NZL:{flag:'🇳🇿',name:'New Zealand'},FRA:{flag:'🇫🇷',name:'France'},
+  TAN:{flag:'🇹🇿',name:'Tanzania'},ARG:{flag:'🇦🇷',name:'Argentina'},
+  CHI:{flag:'🇨🇱',name:'Chile'},POR:{flag:'🇵🇹',name:'Portugal'},
+  CRC:{flag:'🇨🇷',name:'Costa Rica'},ENG:{flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',name:'England'},
+  CMR:{flag:'🇨🇲',name:'Cameroon'},ITA:{flag:'🇮🇹',name:'Italy'},
+  ALB:{flag:'🇦🇱',name:'Albania'},COL:{flag:'🇨🇴',name:'Colombia'},
+  GUA:{flag:'🇬🇹',name:'Guatemala'},DEN:{flag:'🇩🇰',name:'Denmark'},
+  SEN:{flag:'🇸🇳',name:'Senegal'},CHN:{flag:'🇨🇳',name:'China'},
+  NGA:{flag:'🇳🇬',name:'Nigeria'},PAN:{flag:'🇵🇦',name:'Panama'},
+  VEN:{flag:'🇻🇪',name:'Venezuela'},BOL:{flag:'🇧🇴',name:'Bolivia'},
+  IRN:{flag:'🇮🇷',name:'Iran'},IRQ:{flag:'🇮🇶',name:'Iraq'},
+  NOR:{flag:'🇳🇴',name:'Norway'},POL:{flag:'🇵🇱',name:'Poland'},
+  SRB:{flag:'🇷🇸',name:'Serbia'},CRO:{flag:'🇭🇷',name:'Croatia'},
+  UKR:{flag:'🇺🇦',name:'Ukraine'},SVK:{flag:'🇸🇰',name:'Slovakia'},
+  ROU:{flag:'🇷🇴',name:'Romania'},HUN:{flag:'🇭🇺',name:'Hungary'},
+  GRE:{flag:'🇬🇷',name:'Greece'},AUT:{flag:'🇦🇹',name:'Austria'},
+};
+function teamFlag(c){return(TEAM_INFO[c]||{}).flag||'🏳️';}
+function teamName(c){return(TEAM_INFO[c]||{}).name||c;}
+function teamDisplay(c){return teamFlag(c)+' '+teamName(c);}
+
 // ── LOAD LEADERBOARD ─────────────────────────────────────────────────────────
 async function loadData() {
   document.getElementById('lb-loading').style.display  = 'block';
@@ -321,8 +359,11 @@ function renderLeaderboard(data) {
     const teamPart = parenIdx > -1 ? matchLbl.substring(0, parenIdx).trim() : matchLbl;
     const datePart = parenIdx > -1 ? matchLbl.substring(parenIdx).replace(/[()]/g,'').trim() : '';
     const resultStr = m.hasResult ? m.r1 + '–' + m.r2 : '';
-    thHTML += `<th style="min-width:72px">
-      <span class="match-th-label">${esc(teamPart)}</span>
+    // Build flagged header: "🇲🇽 MEX – 🇿🇦 RSA"
+    const teamCodes = teamPart.split('-').map(t => t.trim());
+    const flaggedTeams = teamCodes.map(c => teamFlag(c) + '\u00A0' + c).join(' – ');
+    thHTML += `<th style="min-width:80px">
+      <span class="match-th-label">${flaggedTeams}</span>
       <span class="match-th-date">${esc(datePart)}</span>
       ${resultStr ? `<span class="match-th-result">${esc(resultStr)}</span>` : ''}
     </th>`;
@@ -364,7 +405,8 @@ function renderLeaderboard(data) {
       } else {
         // type === 'score'
         const ptsStr = cell.points !== null ? cell.points : '';
-        td.innerHTML = `<div class="pred-score">${cell.p1}–${cell.p2}</div>
+        const tip = teamName(cell.team1)+' '+cell.p1+'–'+cell.p2+' '+teamName(cell.team2);
+        td.innerHTML = `<div class="pred-score" title="${esc(tip)}">${teamFlag(cell.team1)}${cell.p1}–${cell.p2}${teamFlag(cell.team2)}</div>
           ${ptsStr !== '' ? `<div class="pred-pts ${Number(ptsStr)>0?'pos':''}">${Number(ptsStr)>0?'+':''}${ptsStr}</div>` : ''}`;
       }
       tr.appendChild(td);
