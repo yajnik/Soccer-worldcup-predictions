@@ -80,6 +80,21 @@
     footer{text-align:center;padding:22px 20px;background:var(--green);color:rgba(255,255,255,.35);font-size:.74rem;}
     footer span{color:var(--gold);}
 
+    /* SECTION DIVIDERS */
+    .section-head{display:flex;align-items:center;gap:12px;margin:28px 0 14px;}
+    .section-head .pip{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+    .section-head.past .pip{background:var(--gold);}
+    .section-head.upcoming .pip{background:#4a9d6f;}
+    .section-head h3{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;}
+    .section-head.past h3{color:var(--green);}
+    .section-head.upcoming h3{color:#1a7a42;}
+    .section-head .rule{flex:1;height:1px;background:linear-gradient(to right,rgba(201,168,76,.3),transparent);}
+    .section-head .count-badge{font-size:.65rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:3px 9px;border-radius:50px;white-space:nowrap;}
+    .section-head.past .count-badge{background:rgba(201,168,76,.12);color:var(--gold);border:1px solid rgba(201,168,76,.25);}
+    .section-head.upcoming .count-badge{background:rgba(74,157,111,.1);color:#1a7a42;border:1px solid rgba(74,157,111,.25);}
+    /* UPCOMING card — green accent */
+    .pred-list-wrap.upcoming .pred-list-header{background:#eef6f1;}
+    .pred-list-wrap.upcoming .pred-row:hover{background:rgba(74,157,111,.04);}
     /* MOBILE BOTTOM TAB BAR */
     .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--green);border-top:1px solid rgba(255,255,255,.1);z-index:100;padding-bottom:env(safe-area-inset-bottom,0);}
     .mobile-nav-inner{display:flex;align-items:stretch;}
@@ -154,13 +169,7 @@ if (localStorage.getItem('wc_user_email')) {
       </div>
     </div>
 
-    <!-- List -->
-    <div class="sec-head">
-      <div class="pip"></div>
-      <h2>Your Picks</h2>
-      <div class="rule"></div>
-    </div>
-
+    <!-- List — sections injected by JS -->
     <div class="spinner-wrap" id="loading-wrap">
       <div class="spinner"></div>
       <p>Loading your predictions…</p>
@@ -185,6 +194,38 @@ if (localStorage.getItem('wc_user_email')) {
 
 <script>
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8Y7cN45cngyLFGz9LkqQnc3nCmOy39Rzi-BqTVVMRab1tIWci4sC86ZNsN2Rm0f2e/exec';
+
+// ── TEAM FLAGS & NAMES ───────────────────────────────────────────────────────
+const TEAM_INFO = {
+  MEX:{flag:'🇲🇽',name:'Mexico'},RSA:{flag:'🇿🇦',name:'South Africa'},
+  KOR:{flag:'🇰🇷',name:'South Korea'},CZE:{flag:'🇨🇿',name:'Czechia'},
+  CAN:{flag:'🇨🇦',name:'Canada'},BIH:{flag:'🇧🇦',name:'Bosnia & Herz.'},
+  USA:{flag:'🇺🇸',name:'USA'},PAR:{flag:'🇵🇾',name:'Paraguay'},
+  QAT:{flag:'🇶🇦',name:'Qatar'},SUI:{flag:'🇨🇭',name:'Switzerland'},
+  BRA:{flag:'🇧🇷',name:'Brazil'},MAR:{flag:'🇲🇦',name:'Morocco'},
+  HAI:{flag:'🇭🇹',name:'Haiti'},SCO:{flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',name:'Scotland'},
+  AUS:{flag:'🇦🇺',name:'Australia'},TUR:{flag:'🇹🇷',name:'Turkey'},
+  GER:{flag:'🇩🇪',name:'Germany'},CUW:{flag:'🇨🇼',name:'Curaçao'},
+  NED:{flag:'🇳🇱',name:'Netherlands'},JPN:{flag:'🇯🇵',name:'Japan'},
+  CIV:{flag:'🇨🇮',name:"Côte d'Ivoire"},ECU:{flag:'🇪🇨',name:'Ecuador'},
+  SWE:{flag:'🇸🇪',name:'Sweden'},TUN:{flag:'🇹🇳',name:'Tunisia'},
+  ESP:{flag:'🇪🇸',name:'Spain'},CPV:{flag:'🇨🇻',name:'Cape Verde'},
+  BEL:{flag:'🇧🇪',name:'Belgium'},EGY:{flag:'🇪🇬',name:'Egypt'},
+  KSA:{flag:'🇸🇦',name:'Saudi Arabia'},URU:{flag:'🇺🇾',name:'Uruguay'},
+  NZL:{flag:'🇳🇿',name:'New Zealand'},FRA:{flag:'🇫🇷',name:'France'},
+  TAN:{flag:'🇹🇿',name:'Tanzania'},ARG:{flag:'🇦🇷',name:'Argentina'},
+  CHI:{flag:'🇨🇱',name:'Chile'},POR:{flag:'🇵🇹',name:'Portugal'},
+  CRC:{flag:'🇨🇷',name:'Costa Rica'},ENG:{flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',name:'England'},
+  CMR:{flag:'🇨🇲',name:'Cameroon'},ITA:{flag:'🇮🇹',name:'Italy'},
+  ALB:{flag:'🇦🇱',name:'Albania'},COL:{flag:'🇨🇴',name:'Colombia'},
+  GUA:{flag:'🇬🇹',name:'Guatemala'},DEN:{flag:'🇩🇰',name:'Denmark'},
+  SEN:{flag:'🇸🇳',name:'Senegal'},CHN:{flag:'🇨🇳',name:'China'},
+  NGA:{flag:'🇳🇬',name:'Nigeria'},PAN:{flag:'🇵🇦',name:'Panama'},
+  VEN:{flag:'🇻🇪',name:'Venezuela'},BOL:{flag:'🇧🇴',name:'Bolivia'},
+};
+function teamFlag(c){return(TEAM_INFO[c]||{}).flag||'🏳️';}
+function teamName(c){return(TEAM_INFO[c]||{}).name||c;}
+function teamDisplay(c){return teamFlag(c)+' '+teamName(c);}
 
 let currentUser = null;
 
@@ -244,52 +285,87 @@ function renderPredictions(preds) {
   [...preds].reverse().forEach(p => {
     if (!seen.has(p.matchId)) { seen.add(p.matchId); deduped.push(p); }
   });
-  // Sort by matchId descending (latest match number first)
-  preds = deduped.sort((a, b) => Number(b.matchId) - Number(a.matchId));
 
-  document.getElementById('ub-count').textContent = preds.length;
+  // Split into past (has actualScore or points) vs upcoming (no result yet)
+  const past     = deduped.filter(p => p.actualScore || (p.points !== '' && p.points !== undefined));
+  const upcoming = deduped.filter(p => !p.actualScore && (p.points === '' || p.points === undefined));
+
+  // Past: latest match first (highest matchId first)
+  past.sort((a, b) => Number(b.matchId) - Number(a.matchId));
+  // Upcoming: closest game first (lowest matchId first)
+  upcoming.sort((a, b) => Number(a.matchId) - Number(b.matchId));
+
+  document.getElementById('ub-count').textContent = deduped.length;
   const list = document.getElementById('pred-list');
-  list.innerHTML = '';  // clear before render  // clear before render — prevents double render
+  list.innerHTML = '';
 
-  // Build list wrapper with header
-  const wrap = document.createElement('div');
-  wrap.className = 'pred-list-wrap';
-  wrap.innerHTML = `
-    <div class="pred-list-header">
-      <div class="plh-cell">Match</div>
-      <div class="plh-cell center">Your Score</div>
-      <div class="plh-cell right">Result</div>
-    </div>`;
+  function buildSection(items, type) {
+    if (!items.length) return;
 
-  preds.forEach(p => {
-    let statusClass = 'pending', statusText = '⏳';
-    if (p.points !== '' && p.points !== undefined) {
-      statusClass = Number(p.points) > 0 ? 'correct' : 'wrong';
-      statusText  = Number(p.points) > 0 ? '+' + p.points + ' pts' : '✗ Miss';
-    }
+    // Section header
+    const head = document.createElement('div');
+    head.className = 'section-head ' + type;
+    const label = type === 'past' ? '📋 Results In' : '⏳ Awaiting Result';
+    head.innerHTML = `
+      <div class="pip"></div>
+      <h3>${label}</h3>
+      <span class="count-badge">${items.length} match${items.length !== 1 ? 'es' : ''}</span>
+      <div class="rule"></div>`;
+    list.appendChild(head);
 
-    const row = document.createElement('div');
-    row.className = 'pred-row';
-    row.innerHTML = `
-      <div>
-        <div class="pr-match">${esc(p.matchLabel || p.matchId)}</div>
-        <div class="pr-date">${esc(p.timestamp || '')}</div>
-      </div>
-      <div>
-        <div class="pr-score">
-          <div class="pr-teams"><span>${esc(p.team1)}</span><span>${esc(p.team2)}</span></div>
-          ${esc(String(p.score1))} – ${esc(String(p.score2))}
+    const wrap = document.createElement('div');
+    wrap.className = 'pred-list-wrap ' + type;
+    wrap.innerHTML = `
+      <div class="pred-list-header">
+        <div class="plh-cell">Match</div>
+        <div class="plh-cell center">Your Score</div>
+        <div class="plh-cell right">${type === 'past' ? 'Points' : 'Status'}</div>
+      </div>`;
+
+    items.forEach(p => {
+      let statusClass, statusText;
+      if (type === 'upcoming') {
+        statusClass = 'pending';
+        statusText  = '🕐 Pending';
+      } else if (p.points !== '' && p.points !== undefined) {
+        statusClass = Number(p.points) > 0 ? 'correct' : 'wrong';
+        statusText  = Number(p.points) > 0 ? '+' + p.points + ' pts' : '✗ Miss';
+      } else {
+        statusClass = 'pending';
+        statusText  = '⏳';
+      }
+
+      // Add flag emojis to team names
+      const t1display = teamDisplay(p.team1);
+      const t2display = teamDisplay(p.team2);
+
+      const row = document.createElement('div');
+      row.className = 'pred-row';
+      row.innerHTML = `
+        <div>
+          <div class="pr-match">${esc(p.matchLabel || p.matchId)}</div>
+          <div class="pr-date">${esc(p.timestamp || '')}</div>
         </div>
-        <div class="pr-winner" style="font-size:.62rem;color:var(--muted);text-align:center;">${esc(p.winner)}</div>
-      </div>
-      <div style="text-align:right">
-        <div class="pr-status ${statusClass}">${statusText}</div>
-        ${p.actualScore ? `<div style="font-size:.62rem;color:var(--muted);margin-top:3px;">Actual: ${esc(p.actualScore)}</div>` : ''}
-      </div>
-    `;
-    wrap.appendChild(row);
-  });
-  list.appendChild(wrap);
+        <div>
+          <div class="pr-score">
+            <div class="pr-teams"><span>${t1display}</span><span>${t2display}</span></div>
+            ${esc(String(p.score1))} – ${esc(String(p.score2))}
+          </div>
+          <div class="pr-winner" style="font-size:.62rem;color:var(--muted);text-align:center;">${esc(p.winner)}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="pr-status ${statusClass}">${statusText}</div>
+          ${p.actualScore ? `<div style="font-size:.62rem;color:var(--muted);margin-top:3px;">Actual: ${esc(p.actualScore)}</div>` : ''}
+        </div>
+      `;
+      wrap.appendChild(row);
+    });
+    list.appendChild(wrap);
+  }
+
+  // Upcoming first (like cricket — next game at top), then past results below
+  buildSection(upcoming, 'upcoming');
+  buildSection(past, 'past');
 }
 
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
