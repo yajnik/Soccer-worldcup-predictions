@@ -146,14 +146,17 @@
     /* LEADERBOARD TABLE */
     .lb-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
     .lb-table{width:100%;border-collapse:collapse;min-width:500px;}
-    .lb-table th{background:#f2ede0;padding:7px 6px;font-size:.6rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);white-space:nowrap;border-bottom:2px solid var(--border);border-right:1px solid rgba(201,168,76,.1);min-width:58px;}
+    .lb-table th{background:#f2ede0;padding:7px 6px;font-size:.6rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);white-space:nowrap;border-bottom:2px solid var(--border);border-right:1px solid rgba(201,168,76,.1);min-width:62px;max-width:72px;width:62px;}
     .lb-table th:last-child{border-right:none;}
-    .lb-table th.sticky-col{position:sticky;left:0;z-index:3;background:#f2ede0;box-shadow:2px 0 6px rgba(0,0,0,.06);min-width:80px;max-width:95px;}
-    .lb-table td{padding:7px 6px;font-size:.78rem;border-bottom:1px solid rgba(201,168,76,.08);border-right:1px solid rgba(201,168,76,.06);text-align:center;vertical-align:middle;min-width:58px;}
+    .lb-table th.sticky-col{position:sticky;left:0;z-index:3;background:#f2ede0;box-shadow:none;min-width:80px;max-width:95px;width:85px;}
+    .lb-table th.sticky-pts{position:sticky;left:85px;z-index:3;background:#f2ede0;box-shadow:3px 0 6px rgba(0,0,0,.07);min-width:38px;max-width:44px;width:40px;text-align:center;}
+    .lb-table td{padding:7px 6px;font-size:.78rem;border-bottom:1px solid rgba(201,168,76,.08);border-right:1px solid rgba(201,168,76,.06);text-align:center;vertical-align:middle;min-width:62px;max-width:72px;width:62px;}
     .lb-table td:last-child{border-right:none;}
-    .lb-table td.sticky-col{position:sticky;left:0;z-index:2;background:var(--white);box-shadow:2px 0 6px rgba(0,0,0,.06);text-align:left;min-width:80px;max-width:95px;padding:7px 8px;}
+    .lb-table td.sticky-col{position:sticky;left:0;z-index:2;background:var(--white);box-shadow:none;text-align:left;min-width:80px;max-width:95px;width:85px;padding:7px 8px;}
+    .lb-table td.sticky-pts{position:sticky;left:85px;z-index:2;background:var(--white);box-shadow:3px 0 6px rgba(0,0,0,.07);min-width:38px;max-width:44px;width:40px;text-align:center;padding:7px 4px;}
     .lb-table tr.leader-row td{background:#fdf8ee;}
     .lb-table tr.leader-row td.sticky-col{background:#fdf8ee;}
+    .lb-table tr.leader-row td.sticky-pts{background:#fdf8ee;}
     .lb-table tr:last-child td{border-bottom:none;}
     .lb-table tr:hover td{background:rgba(201,168,76,.04);}
     .lb-table tr:hover td.sticky-col{background:rgba(201,168,76,.04);}
@@ -349,8 +352,8 @@ function renderLeaderboard(data) {
   // ── HEADER ROW ───────────────────────────────────────────────────────────
   const thead = document.createElement('thead');
   let thHTML = '<tr>';
-  thHTML += '<th class="sticky-col" style="min-width:110px">Player</th>';
-  thHTML += '<th style="min-width:48px">Pts</th>';
+  thHTML += '<th class="sticky-col">Player</th>';
+  thHTML += '<th class="sticky-pts">Pts</th>';
   matches.forEach(m => {
     const parts   = m.label.split(':');
     const matchLbl = parts.length > 1 ? parts[1].trim() : m.label;
@@ -359,11 +362,11 @@ function renderLeaderboard(data) {
     const teamPart = parenIdx > -1 ? matchLbl.substring(0, parenIdx).trim() : matchLbl;
     const datePart = parenIdx > -1 ? matchLbl.substring(parenIdx).replace(/[()]/g,'').trim() : '';
     const resultStr = m.hasResult ? m.r1 + '–' + m.r2 : '';
-    // Build flagged header: "🇲🇽 MEX – 🇿🇦 RSA"
+    // Build header without flags — just codes to keep columns narrow
     const teamCodes = teamPart.split('-').map(t => t.trim());
-    const flaggedTeams = teamCodes.map(c => teamFlag(c) + '\u00A0' + c).join(' – ');
-    thHTML += `<th style="min-width:80px">
-      <span class="match-th-label">${flaggedTeams}</span>
+    const compactTeams = teamCodes.join('–');
+    thHTML += `<th>
+      <span class="match-th-label">${compactTeams}</span>
       <span class="match-th-date">${esc(datePart)}</span>
       ${resultStr ? `<span class="match-th-result">${esc(resultStr)}</span>` : ''}
     </th>`;
@@ -390,7 +393,7 @@ function renderLeaderboard(data) {
           <span class="player-name">${esc(player.name)}</span>
         </div>
       </td>
-      <td><span class="pts-cell ${isLeader ? 'top' : ''}">${player.totalPts}</span></td>
+      <td class="sticky-pts"><span class="pts-cell ${isLeader ? 'top' : ''}">${player.totalPts}</span></td>
     `;
 
     // Match cells
