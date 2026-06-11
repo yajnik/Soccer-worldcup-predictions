@@ -409,7 +409,7 @@ function renderLeaderboard(data) {
         // type === 'score'
         const ptsStr = cell.points !== null ? cell.points : '';
         const tip = teamName(cell.team1)+' '+cell.p1+'–'+cell.p2+' '+teamName(cell.team2);
-        td.innerHTML = `<div class="pred-score" title="${esc(tip)}">${teamFlag(cell.team1)}${cell.p1}–${cell.p2}${teamFlag(cell.team2)}</div>
+        td.innerHTML = `<div class="pred-score" title="${esc(tip)}">${cell.p1}–${cell.p2}</div>
           ${ptsStr !== '' ? `<div class="pred-pts ${Number(ptsStr)>0?'pos':''}">${Number(ptsStr)>0?'+':''}${ptsStr}</div>` : ''}`;
       }
       tr.appendChild(td);
