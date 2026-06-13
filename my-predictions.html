@@ -298,14 +298,14 @@ function renderPredictions(preds) {
     if (!seen.has(p.matchId)) { seen.add(p.matchId); deduped.push(p); }
   });
 
-  // Split into past (has actualScore or points) vs upcoming (no result yet)
-  const past     = deduped.filter(p => p.actualScore || (p.points !== '' && p.points !== undefined));
-  const upcoming = deduped.filter(p => !p.actualScore && (p.points === '' || p.points === undefined));
+  // Split into past (has actualScore) vs upcoming (no result yet)
+  const past     = deduped.filter(p => p.actualScore && p.actualScore !== '');
+  const upcoming = deduped.filter(p => !p.actualScore || p.actualScore === '');
 
+  // Upcoming: earliest match first (lowest matchId = soonest)
+  upcoming.sort((a, b) => Number(a.matchId) - Number(b.matchId));
   // Past: latest match first (highest matchId first)
   past.sort((a, b) => Number(b.matchId) - Number(a.matchId));
-  // Upcoming: closest game first (lowest matchId first)
-  upcoming.sort((a, b) => Number(a.matchId) - Number(b.matchId));
 
   document.getElementById('ub-count').textContent = deduped.length;
   const list = document.getElementById('pred-list');
@@ -317,7 +317,7 @@ function renderPredictions(preds) {
     // Section header
     const head = document.createElement('div');
     head.className = 'section-head ' + type;
-    const label = type === 'past' ? '📋 Results In' : '⏳ Awaiting Result';
+    const label = type === 'past' ? '📋 Results In' : '⏳ Upcoming Predictions';
     head.innerHTML = `
       <div class="pip"></div>
       <h3>${label}</h3>
@@ -356,7 +356,8 @@ function renderPredictions(preds) {
       row.innerHTML = `
         <div>
           <div class="pr-match">${esc(p.matchLabel || p.matchId)}</div>
-          <div class="pr-date">${esc(localDate(p.timestamp, true) || '')}</div>
+          <div class="pr-date">${p.matchDate ? localDate(p.matchDate) : ''}</div>
+          ${p.submittedAt ? `<div class="pr-date" style="font-size:.6rem;opacity:.6;">Submitted: ${localDate(p.submittedAt, true)}</div>` : ''}
         </div>
         <div>
           <div class="pr-score">
@@ -375,7 +376,7 @@ function renderPredictions(preds) {
     list.appendChild(wrap);
   }
 
-  // Upcoming first (like cricket — next game at top), then past results below
+  // Upcoming first (soonest match at top), then results below
   buildSection(upcoming, 'upcoming');
   buildSection(past, 'past');
 }
