@@ -347,6 +347,18 @@ function teamFlag(c){return(TEAM_INFO[c]||{}).flag||'🏳️';}
 function teamName(c){return(TEAM_INFO[c]||{}).name||c;}
 function teamDisplay(c){return teamFlag(c)+' '+teamName(c);}
 
+// Format ISO date string in user's local timezone
+function localDate(iso, includeYear) {
+  try {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return iso; // fallback: show raw if not parseable
+    const opts = { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' };
+    if (includeYear) opts.year = 'numeric';
+    return d.toLocaleString([], opts);
+  } catch(e) { return iso; }
+}
+
 let currentUser   = null;
 let matches       = [];
 let selectedMatch = null;
@@ -432,7 +444,7 @@ async function loadMatches() {
     const f1 = parts[0] ? teamFlag(parts[0].trim()) : '';
     const f2 = parts[1] ? teamFlag(parts[1].trim()) : '';
     const teamStr = (f1 && f2) ? f1+' '+(parts[0]||'')+' vs '+f2+' '+(parts[1]||'') : m.label;
-    o.textContent = teamStr + (m.date ? '  ·  ' + m.date : '');
+    o.textContent = teamStr + (m.date ? '  ·  ' + localDate(m.date) : '');
     sel.appendChild(o);
   });
   document.getElementById('main-form').style.display = 'block';
@@ -446,7 +458,7 @@ document.getElementById('match-select').addEventListener('change', function() {
   if (!selectedMatch) { preview.style.display = 'none'; card.style.display = 'none'; return; }
   document.getElementById('prev-t1').textContent   = teamDisplay(selectedMatch.team1);
   document.getElementById('prev-t2').textContent   = teamDisplay(selectedMatch.team2);
-  document.getElementById('prev-meta').textContent = selectedMatch.date || '';
+  document.getElementById('prev-meta').textContent = selectedMatch.date ? localDate(selectedMatch.date) : '';
   preview.style.display = 'block';
   document.getElementById('slabel1').textContent = teamDisplay(selectedMatch.team1);
   document.getElementById('slabel2').textContent = teamDisplay(selectedMatch.team2);

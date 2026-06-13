@@ -227,6 +227,18 @@ function teamFlag(c){return(TEAM_INFO[c]||{}).flag||'🏳️';}
 function teamName(c){return(TEAM_INFO[c]||{}).name||c;}
 function teamDisplay(c){return teamFlag(c)+' '+teamName(c);}
 
+// Format ISO date string in user's local timezone
+function localDate(iso, includeYear) {
+  try {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return iso; // fallback: show raw if not parseable
+    const opts = { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' };
+    if (includeYear) opts.year = 'numeric';
+    return d.toLocaleString([], opts);
+  } catch(e) { return iso; }
+}
+
 let currentUser = null;
 
 // Sign-in handled on predict.html only
@@ -344,7 +356,7 @@ function renderPredictions(preds) {
       row.innerHTML = `
         <div>
           <div class="pr-match">${esc(p.matchLabel || p.matchId)}</div>
-          <div class="pr-date">${esc(p.timestamp || '')}</div>
+          <div class="pr-date">${esc(localDate(p.timestamp, true) || '')}</div>
         </div>
         <div>
           <div class="pr-score">
