@@ -215,7 +215,7 @@
   <div id="leader-banner">
     <div class="leader-crown">👑</div>
     <div class="leader-info">
-      <div class="lbl">Current Leader</div>
+      <div class="lbl" id="leader-lbl">Current Leader</div>
       <div class="name" id="leader-name">—</div>
     </div>
     <div class="leader-pts">
@@ -343,10 +343,13 @@ function renderLeaderboard(data) {
     return;
   }
 
-  // Leader banner
-  const leader = players[0];
-  document.getElementById('leader-name').textContent = leader.name;
-  document.getElementById('leader-pts').textContent  = leader.totalPts;
+  // Leader banner — support tied leaders
+  const topPts    = players[0].totalPts;
+  const leaders   = players.filter(p => p.totalPts === topPts && topPts > 0);
+  const leaderNames = leaders.map(p => p.name).join(' · ');
+  document.getElementById('leader-lbl').textContent  = leaders.length > 1 ? 'Joint Leaders' : 'Current Leader';
+  document.getElementById('leader-name').textContent = leaderNames || players[0].name;
+  document.getElementById('leader-pts').textContent  = topPts;
   document.getElementById('leader-banner').classList.add('show');
 
   // ── HEADER ROW ───────────────────────────────────────────────────────────
@@ -377,15 +380,13 @@ function renderLeaderboard(data) {
 
   // ── DATA ROWS ────────────────────────────────────────────────────────────
   const tbody = document.createElement('tbody');
-  const maxPts = leader.totalPts;
 
   players.forEach((player, idx) => {
-    const isLeader = idx === 0 && player.totalPts > 0;
+    const isLeader = player.totalPts === topPts && topPts > 0;
     const tr = document.createElement('tr');
     if (isLeader) tr.classList.add('leader-row');
 
-    // Player name cell
-    // Player name cell — crown for leader, no avatar
+    // Player name cell — crown for all leaders (including ties)
     tr.innerHTML = `
       <td class="sticky-col">
         <div class="player-cell">
