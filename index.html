@@ -311,6 +311,16 @@ function teamFlag(c){return(TEAM_INFO[c]||{}).flag||'🏳️';}
 function teamName(c){return(TEAM_INFO[c]||{}).name||c;}
 function teamDisplay(c){return teamFlag(c)+' '+teamName(c);}
 
+// ── FORMAT ISO DATE IN USER'S LOCAL TIMEZONE ─────────────────────────────────
+function localDate(iso) {
+  try {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return iso;
+    return d.toLocaleString([], { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+  } catch(e) { return iso; }
+}
+
 // ── LOAD LEADERBOARD ─────────────────────────────────────────────────────────
 async function loadData() {
   document.getElementById('lb-loading').style.display  = 'block';
@@ -368,9 +378,11 @@ function renderLeaderboard(data) {
     // Build header without flags — just codes to keep columns narrow
     const teamCodes = teamPart.split('-').map(t => t.trim());
     const compactTeams = teamCodes.join('–');
+    // Use matchIso for local timezone conversion if available, else fall back to static label date
+    const dateDisplay = m.matchIso ? localDate(m.matchIso) : esc(datePart);
     thHTML += `<th>
       <span class="match-th-label">${compactTeams}</span>
-      <span class="match-th-date">${esc(datePart)}</span>
+      <span class="match-th-date">${dateDisplay}</span>
       ${resultStr ? `<span class="match-th-result">${esc(resultStr)}</span>` : ''}
     </th>`;
   });
