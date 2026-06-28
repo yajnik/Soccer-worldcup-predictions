@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIFA World Cup 2026 — Prediction Game Stats</title>
+<title>FIFA World Cup 2026 — Group 1 Stats (Through R32)</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -12,19 +12,8 @@
     color: #1a1a18;
     padding: 2rem 1rem;
   }
-  h1 {
-    text-align: center;
-    font-size: 22px;
-    font-weight: 500;
-    margin-bottom: 0.4rem;
-    color: #1a1a18;
-  }
-  .subtitle {
-    text-align: center;
-    font-size: 14px;
-    color: #5f5e5a;
-    margin-bottom: 2rem;
-  }
+  h1 { text-align: center; font-size: 22px; font-weight: 500; margin-bottom: 0.4rem; }
+  .subtitle { text-align: center; font-size: 14px; color: #5f5e5a; margin-bottom: 2rem; }
   .stats-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -37,223 +26,185 @@
     border: 0.5px solid rgba(0,0,0,0.12);
     border-radius: 12px;
     padding: 1rem 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    display: flex; flex-direction: column; gap: 10px;
   }
   .stat-card-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: #5f5e5a;
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.07em; color: #5f5e5a;
   }
-  .stat-card-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
+  .stat-card-table { width: 100%; border-collapse: collapse; font-size: 13px; }
   .stat-card-table thead tr th {
-    text-align: left;
-    padding: 4px 6px;
-    font-size: 11px;
-    font-weight: 500;
-    color: #888780;
-    border-bottom: 0.5px solid rgba(0,0,0,0.1);
+    text-align: left; padding: 4px 6px; font-size: 11px; font-weight: 500;
+    color: #888780; border-bottom: 0.5px solid rgba(0,0,0,0.1);
   }
   .stat-card-table tbody tr td {
-    padding: 5px 6px;
-    color: #1a1a18;
+    padding: 5px 6px; color: #1a1a18;
     border-bottom: 0.5px solid rgba(0,0,0,0.07);
   }
   .stat-card-table tbody tr:last-child td { border-bottom: none; }
-  .num {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    font-weight: 500;
-  }
+  .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
   .stat-card-narrative {
-    font-size: 13px;
-    color: #5f5e5a;
-    line-height: 1.6;
-    padding-top: 8px;
-    border-top: 0.5px solid rgba(0,0,0,0.08);
+    font-size: 13px; color: #5f5e5a; line-height: 1.6;
+    padding-top: 8px; border-top: 0.5px solid rgba(0,0,0,0.08);
   }
-  .badge {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 99px;
-  }
-  .badge-gold    { background: #FAEEDA; color: #633806; }
-  .badge-silver  { background: #D3D1C7; color: #2C2C2A; }
-  .badge-teal    { background: #E1F5EE; color: #085041; }
-  .badge-red     { background: #FCEBEB; color: #791F1F; }
-  .badge-blue    { background: #E6F1FB; color: #0C447C; }
-  .badge-purple  { background: #EEEDFE; color: #3C3489; }
+  .stat-card-footer { font-size: 11px; color: #aaa9a5; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
+  .badge-gold   { background: #FAEEDA; color: #633806; }
+  .badge-silver { background: #D3D1C7; color: #2C2C2A; }
+  .badge-teal   { background: #E1F5EE; color: #085041; }
+  .badge-red    { background: #FCEBEB; color: #791F1F; }
+  .badge-blue   { background: #E6F1FB; color: #0C447C; }
+  .badge-purple { background: #EEEDFE; color: #3C3489; }
+  .badge-amber  { background: #FEF3C7; color: #92400E; }
+  .nickname { font-size: 11px; font-weight: 600; color: #888780; font-style: italic; }
 </style>
 </head>
 <body>
 
-<h1>⚽ FIFA World Cup 2026 — Prediction Game</h1>
-<p class="subtitle">33 matches · 6 players · stats after group stage</p>
+<h1>⚽ FIFA World Cup 2026 — Prediction Game (Group 1)</h1>
+<p class="subtitle">72 matches · 6 players · Group stage through Round of 32</p>
 
 <div class="stats-cards-grid">
 
   <!-- CARD 1: LEADERBOARD -->
   <div class="stat-card">
-    <div class="stat-card-label">🏆 Overall Leaderboard — Total Points</div>
+    <div class="stat-card-label">🏆 Leaderboard — Through Round of 32</div>
     <table class="stat-card-table">
-      <thead>
-        <tr><th>Player</th><th style="text-align:right">Pts</th><th style="text-align:right">Exact (5pt)</th></tr>
-      </thead>
+      <thead><tr><th>Player</th><th style="text-align:right">Pts</th><th style="text-align:right">Matches</th><th style="text-align:right">5-pt hits</th></tr></thead>
       <tbody>
-        <tr><td>Mangesh Yadav <span class="badge badge-gold">1st</span></td><td class="num">67</td><td class="num">4</td></tr>
-        <tr><td>Chandramouli S <span class="badge badge-silver">2nd</span></td><td class="num">65</td><td class="num">4</td></tr>
-        <tr><td>Tushar Halarnkar</td><td class="num">60</td><td class="num">1</td></tr>
-        <tr><td>Yogendra Karmali</td><td class="num">56</td><td class="num">2</td></tr>
-        <tr><td>Sneha Yajnik</td><td class="num">50</td><td class="num">0</td></tr>
-        <tr><td>Rashmi Shetye</td><td class="num">31</td><td class="num">2</td></tr>
+        <tr><td>Mangesh Yadav <span class="badge badge-gold">1st</span></td><td class="num">152</td><td class="num">72</td><td class="num">8</td></tr>
+        <tr><td>Chandramouli S <span class="badge badge-silver">2nd</span></td><td class="num">147</td><td class="num">68</td><td class="num">10</td></tr>
+        <tr><td>Yogendra Karmali</td><td class="num">137</td><td class="num">72</td><td class="num">6</td></tr>
+        <tr><td>Tushar Halarnkar</td><td class="num">135</td><td class="num">72</td><td class="num">4</td></tr>
+        <tr><td>Sneha Yajnik</td><td class="num">115</td><td class="num">72</td><td class="num">3</td></tr>
+        <tr><td>Rashmi Shetye</td><td class="num">82</td><td class="num">51</td><td class="num">4</td></tr>
       </tbody>
     </table>
-    <div class="stat-card-narrative">Mangesh edges Mouli by just 2 points — the tightest race at the top. Tushar sits a solid 3rd despite only 1 exact score, showing consistent winner-picking throughout. Sneha has zero exact scores yet still outpoints Rashmi by 19 — quantity of right winners vs quality of precise calls.</div>
+    <div class="stat-card-narrative">The most maddening scoreline: Mouli leads on exact scores (10 vs Mangesh's 8) but trails by 5 points because he missed 4 matches. Mangesh wins on volume, Mouli wins on precision — and the 5-point gap proves that showing up matters as much as being right. Rashmi, the part-timer, quietly averages a 5-pointer every 12.8 matches — the best exact-hit rate in the group.</div>
+    <div class="stat-card-footer"></div>
   </div>
 
-  <!-- CARD 2: EXACT SCORES -->
+  <!-- CARD 2: PLAYER ARCHETYPES -->
   <div class="stat-card">
-    <div class="stat-card-label">🎯 Exact Score Oracle — All 5-Point Hits</div>
+    <div class="stat-card-label">🎭 Prediction Archetypes — One Name, One Truth</div>
     <table class="stat-card-table">
-      <thead>
-        <tr><th>Player</th><th>Match</th><th style="text-align:right">Score</th></tr>
-      </thead>
+      <thead><tr><th>Player</th><th>Title</th><th>Why</th></tr></thead>
       <tbody>
-        <tr><td>Mangesh Yadav</td><td>MEX-RSA (#1)</td><td class="num">2–0 ✓</td></tr>
-        <tr><td>Mangesh Yadav</td><td>FRA-SEN (#17)</td><td class="num">3–1 ✓</td></tr>
-        <tr><td>Mangesh Yadav</td><td>USA-AUS (#29)</td><td class="num">2–0 ✓</td></tr>
-        <tr><td>Mangesh Yadav</td><td>SCO-MAR (#30)</td><td class="num">0–1 ✓</td></tr>
-        <tr><td>Chandramouli S</td><td>CAN-BIH (#3)</td><td class="num">1–1 ✓</td></tr>
-        <tr><td>Chandramouli S</td><td>NED-JPN (#10)</td><td class="num">2–2 ✓</td></tr>
-        <tr><td>Chandramouli S</td><td>IRN-NZL (#16)</td><td class="num">2–2 ✓</td></tr>
-        <tr><td>Chandramouli S</td><td>BRA-HAI (#31)</td><td class="num">3–0 ✓</td></tr>
-        <tr><td>Yogendra Karmali</td><td>AUS-TUR (#8)</td><td class="num">2–0 ✓</td></tr>
-        <tr><td>Yogendra Karmali</td><td>MEX-KOR (#28)</td><td class="num">1–0 ✓</td></tr>
-        <tr><td>Tushar Halarnkar</td><td>FRA-SEN (#17)</td><td class="num">3–1 ✓</td></tr>
-        <tr><td>Rashmi Shetye</td><td>KOR-CZE (#2)</td><td class="num">2–1 ✓</td></tr>
-        <tr><td>Rashmi Shetye</td><td>BRA-HAI (#31)</td><td class="num">3–0 ✓</td></tr>
+        <tr><td>Mangesh Yadav</td><td><span class="badge badge-gold">The Postman</span></td><td>Always delivers — 28 three-pointers, never misses</td></tr>
+        <tr><td>Chandramouli S</td><td><span class="badge badge-silver">The Surgeon</span></td><td>10 exact scores, two exact 2–2 draws, one 0–3</td></tr>
+        <tr><td>Yogendra Karmali</td><td><span class="badge badge-blue">The Miser</span></td><td>All 6 exact scores are tight 1–0 or 2–0 wins</td></tr>
+        <tr><td>Tushar Halarnkar</td><td><span class="badge badge-teal">The Metronome</span></td><td>Fewest exact scores but steadiest 3-pt accumulator</td></tr>
+        <tr><td>Sneha Yajnik</td><td><span class="badge badge-purple">The Bridesmaid</span></td><td>3 exact scores in 72 matches; always one goal shy</td></tr>
+        <tr><td>Rashmi Shetye</td><td><span class="badge badge-amber">The Sniper</span></td><td>51 matches, 4 exact scores — strikes rarely, hits hard</td></tr>
       </tbody>
     </table>
-    <div class="stat-card-narrative">Mangesh's 4 exact hits span from match 1 to match 30. Mouli is the draw whisperer: two exact 2–2s and a 1–1, which no one else managed. Tushar and Mangesh both nailed FRA-SEN 3–1 — the only match where two players hit the exact score simultaneously.</div>
+    <div class="stat-card-narrative">Mangesh's 28 three-pointers is a group record — he points-farms like a machine. Yogi's all-exact-scores-are-tight-wins quirk is genuinely uncanny: AUS-TUR 2–0, MEX-KOR 1–0, PAN-CRO 0–1, COL-CGO 1–0, RSA-KOR 1–0. The man simply does not believe in goals. Meanwhile Sneha — 72 matches, 3 exact scores — keeps picking the right team and the wrong scoreline.</div>
+    <div class="stat-card-footer"></div>
   </div>
 
-  <!-- CARD 3: EFFICIENCY -->
+  <!-- CARD 3: THE THREE BLACKOUTS -->
   <div class="stat-card">
-    <div class="stat-card-label">📈 Points Per Match — Efficiency Ranking</div>
+    <div class="stat-card-label">🌑 Total Blackouts — Matches Where the Group Scored 0</div>
     <table class="stat-card-table">
-      <thead>
-        <tr><th>Player</th><th style="text-align:right">Matches</th><th style="text-align:right">Pts/match</th></tr>
-      </thead>
+      <thead><tr><th>Match</th><th>The group predicted</th><th style="text-align:right">Actual</th></tr></thead>
       <tbody>
-        <tr><td>Mangesh Yadav</td><td class="num">33</td><td class="num">2.03</td></tr>
-        <tr><td>Chandramouli S</td><td class="num">32</td><td class="num">2.03</td></tr>
-        <tr><td>Tushar Halarnkar</td><td class="num">33</td><td class="num">1.82</td></tr>
-        <tr><td>Yogendra Karmali</td><td class="num">33</td><td class="num">1.70</td></tr>
-        <tr><td>Sneha Yajnik</td><td class="num">33</td><td class="num">1.52</td></tr>
-        <tr><td>Rashmi Shetye</td><td class="num">24</td><td class="num">1.29</td></tr>
+        <tr><td>ECU-GER (#56)</td><td>Germany win (0–4, 1–3, 1–2)</td><td class="num">2–1 Ecuador <span class="badge badge-red">0 pts</span></td></tr>
+        <tr><td>ALG-AUT (#71)</td><td>One team wins (2–1, 1–2, 0–1)</td><td class="num">3–3 draw <span class="badge badge-red">0 pts</span></td></tr>
+        <tr><td>COL-POR (#69)</td><td>Portugal win (1–2, 1–3, 2–3)</td><td class="num">0–0 draw <span class="badge badge-red">0 pts</span></td></tr>
       </tbody>
     </table>
-    <div class="stat-card-narrative">Mangesh and Mouli are perfectly tied at 2.03 pts/match — the title really does come down to Mangesh playing one extra game (he entered match 6 BRA-MAR which Mouli skipped). Rashmi played only 24 of 33 matches and sits last — missed entries cost her dearly.</div>
+    <div class="stat-card-narrative">Three matches, 18 predictions, zero points combined. ECU-GER was the cruelest — Mouli put 0–4 Germany, Sneha put 0–4 Germany, Tushar put 1–3 Germany. Ecuador won 2–1. ALG-AUT ended 3–3 when nobody imagined a draw with six goals. COL-POR was forecast as a Portugal stroll by all five players who entered; it finished 0–0. Somewhere, Ecuador, Algeria and a Colombian goalkeeper are laughing.</div>
+    <div class="stat-card-footer"></div>
   </div>
 
-  <!-- CARD 4: HIVE MIND -->
+  <!-- CARD 4: JOR-ALG MIRACLE MATCH -->
   <div class="stat-card">
-    <div class="stat-card-label">🤝 Hive Mind — Matches All Players Scored Points</div>
+    <div class="stat-card-label">⚡ The JOR-ALG Telepathy — Three Players, One Exact Score</div>
     <table class="stat-card-table">
-      <thead>
-        <tr><th>Match</th><th>Result</th><th style="text-align:right">Group total</th></tr>
-      </thead>
+      <thead><tr><th>Player</th><th style="text-align:right">Prediction</th><th style="text-align:right">Pts</th></tr></thead>
       <tbody>
-        <tr><td>BRA-HAI (#31)</td><td>3–0 Brazil</td><td class="num"><span class="badge badge-teal">20 pts</span></td></tr>
-        <tr><td>MEX-KOR (#28)</td><td>1–0 Mexico</td><td class="num"><span class="badge badge-teal">20 pts</span></td></tr>
-        <tr><td>SCO-MAR (#30)</td><td>0–1 Morocco</td><td class="num"><span class="badge badge-teal">18 pts</span></td></tr>
-        <tr><td>FRA-SEN (#17)</td><td>3–1 France</td><td class="num"><span class="badge badge-teal">16 pts</span></td></tr>
-        <tr><td>ARG-ALG (#19)</td><td>3–0 Argentina</td><td class="num"><span class="badge badge-teal">15 pts</span></td></tr>
+        <tr><td>Chandramouli S</td><td class="num">1–2 Algeria <span class="badge badge-gold">✓</span></td><td class="num">5</td></tr>
+        <tr><td>Mangesh Yadav</td><td class="num">1–2 Algeria <span class="badge badge-gold">✓</span></td><td class="num">5</td></tr>
+        <tr><td>Tushar Halarnkar</td><td class="num">1–2 Algeria <span class="badge badge-gold">✓</span></td><td class="num">5</td></tr>
+        <tr><td>Yogendra Karmali</td><td class="num">1–0 Jordan</td><td class="num">1</td></tr>
+        <tr><td>Rashmi Shetye</td><td class="num">1–1 draw</td><td class="num">1</td></tr>
+        <tr><td>Sneha Yajnik</td><td class="num">2–0 Jordan</td><td class="num">0</td></tr>
+        <tr><td colspan="2" style="color:#888780; font-size:11px">Actual result: Jordan 1–2 Algeria</td><td class="num"><strong>17 pts</strong></td></tr>
       </tbody>
     </table>
-    <div class="stat-card-narrative">BRA-HAI and MEX-KOR both generated a perfect 20 pts — every player called the right winner. Brazil crushing Haiti 3–0 was everyone's pick, with Mouli and Rashmi even nailing it exactly for 5 pts each. SCO-MAR was special: Mangesh called it exactly (0–1) while the rest still got winner-only points.</div>
+    <div class="stat-card-narrative">The single most profitable match of the tournament so far — three independent minds all settled on 1–2 Algeria and were all exactly right. No collaboration, no group chat hint, just three people thinking the same thing. Sneha picked Jordan to win 2–0, which aged spectacularly badly. This is the only match in 72 where three players simultaneously hit the exact score.</div>
+    <div class="stat-card-footer"></div>
   </div>
 
-  <!-- CARD 5: COLLECTIVE DISASTER -->
+  <!-- CARD 5: YOGI THE MINIMALIST -->
   <div class="stat-card">
-    <div class="stat-card-label">💀 Collective Disaster — Worst Matches for the Group</div>
+    <div class="stat-card-label">🧘 The Miser's Masterclass — Yogi's Exact Scores</div>
     <table class="stat-card-table">
-      <thead>
-        <tr><th>Match</th><th>Actual result</th><th style="text-align:right">Group total</th></tr>
-      </thead>
+      <thead><tr><th>Match</th><th style="text-align:right">Yogi called</th><th style="text-align:right">Others predicted</th></tr></thead>
       <tbody>
-        <tr><td>POR-CGO (#21)</td><td>1–1 draw</td><td class="num"><span class="badge badge-red">1 pt</span></td></tr>
-        <tr><td>CIV-ECU (#11)</td><td>1–0 CIV</td><td class="num"><span class="badge badge-red">3 pts</span></td></tr>
-        <tr><td>IRN-NZL (#16)</td><td>2–2 draw</td><td class="num"><span class="badge badge-red">5 pts</span></td></tr>
-        <tr><td>IRQ-NOR (#18)</td><td>1–4 Norway</td><td class="num"><span class="badge badge-red">6 pts</span></td></tr>
-        <tr><td>AUT-JOR (#20)</td><td>3–1 Austria</td><td class="num"><span class="badge badge-red">11 pts</span></td></tr>
+        <tr><td>AUS-TUR (#8)</td><td class="num">2–0 ✓</td><td class="num">3–1, 1–0, 0–2</td></tr>
+        <tr><td>MEX-KOR (#28)</td><td class="num">1–0 ✓</td><td class="num">2–1, 3–2, 3–0</td></tr>
+        <tr><td>PAN-CRO (#47)</td><td class="num">0–1 ✓</td><td class="num">0–2, 0–2, 0–2</td></tr>
+        <tr><td>COL-CGO (#48)</td><td class="num">1–0 ✓</td><td class="num">2–0, 2–0, 3–0</td></tr>
+        <tr><td>RSA-KOR (#54)</td><td class="num">1–0 ✓</td><td class="num">2–2, 0–2, 1–3, 0–2</td></tr>
+        <tr><td>GER-CIV (#34)</td><td class="num">2–1 ✓</td><td class="num">4–1, 3–0, 3–2</td></tr>
       </tbody>
     </table>
-    <div class="stat-card-narrative">POR-CGO (#21) was the single worst match for the group — only Yogi scored (1 pt). Everyone else predicted a Portugal win; it ended 1–1. CIV-ECU was nearly as brutal: only Sneha got points (3 pts for CIV), while Mangesh, Tushar, and Yogi all picked Ecuador and got zeroes.</div>
+    <div class="stat-card-narrative">Yogi's pattern is unmistakable: he consistently predicts the smallest possible winning margin while everyone else inflates. In COL-CGO, four other players said 2–0 or 3–0; Yogi said 1–0 and got 5 pts. In RSA-KOR, the rest predicted Korea wins or a Korea goal — Yogi quietly said South Africa 1–0 Korea. The man has a PhD in minimal scorelines.</div>
+    <div class="stat-card-footer"></div>
   </div>
 
-  <!-- CARD 6: MANGESH LATE SURGE -->
+  <!-- CARD 6: GER-CIV BONANZA -->
   <div class="stat-card">
-    <div class="stat-card-label">📊 Mangesh's Late Surge — Where the Title Was Won</div>
+    <div class="stat-card-label">💰 The GER-CIV Bonanza — Group's Highest-Scoring Match</div>
     <table class="stat-card-table">
-      <thead>
-        <tr><th>Match</th><th style="text-align:right">Mangesh</th><th style="text-align:right">Mouli</th></tr>
-      </thead>
+      <thead><tr><th>Player</th><th style="text-align:right">Predicted</th><th style="text-align:right">Pts</th></tr></thead>
       <tbody>
-        <tr><td>CZE-RSA (#25)</td><td class="num">1 pt</td><td class="num">— (skipped)</td></tr>
-        <tr><td>SUI-BIH (#26)</td><td class="num">2 pts</td><td class="num">— (skipped)</td></tr>
-        <tr><td>CAN-QAT (#27)</td><td class="num">3 pts</td><td class="num">— (skipped)</td></tr>
-        <tr><td>SCO-MAR (#30)</td><td class="num"><span class="badge badge-gold">5 pts</span></td><td class="num">1 pt</td></tr>
-        <tr><td>NED-SWE (#33)</td><td class="num">3 pts</td><td class="num">0 pts</td></tr>
-        <tr><td><strong>Matches 25–33 total</strong></td><td class="num"><strong>17 pts</strong></td><td class="num"><strong>4 pts</strong></td></tr>
+        <tr><td>Mangesh Yadav</td><td class="num">2–1 <span class="badge badge-gold">Exact ✓</span></td><td class="num">5</td></tr>
+        <tr><td>Rashmi Shetye</td><td class="num">2–1 <span class="badge badge-gold">Exact ✓</span></td><td class="num">5</td></tr>
+        <tr><td>Yogendra Karmali</td><td class="num">2–1 <span class="badge badge-gold">Exact ✓</span></td><td class="num">5</td></tr>
+        <tr><td>Chandramouli S</td><td class="num">4–1</td><td class="num">3</td></tr>
+        <tr><td>Sneha Yajnik</td><td class="num">4–1</td><td class="num">3</td></tr>
+        <tr><td>Tushar Halarnkar</td><td class="num">3–0</td><td class="num">2</td></tr>
+        <tr><td colspan="2"><strong>Group total (actual: 2–1 Germany)</strong></td><td class="num"><strong>23 pts</strong></td></tr>
       </tbody>
     </table>
-    <div class="stat-card-narrative">This is where the title was won and lost. Mangesh scored 17 pts in matches 25–33 vs Mouli's 4 — largely because Mouli skipped matches 25–27 entirely. Mangesh's stunning 0–1 exact call on SCO-MAR sealed the deal. Had Mouli entered those three matches, this race would have been far tighter.</div>
+    <div class="stat-card-narrative">GER-CIV (#34) generated 23 points — the highest of any match in 72 games. Three players independently hit the exact 2–1 scoreline: Mangesh, Rashmi and Yogi. The three who over-predicted Germany's margin (4–1 or 3–0) still scored 2 or 3 pts. Only Tushar, who picked a clean sheet for Germany, missed the Ivory Coast goal and picked up just 2 pts.</div>
+    <div class="stat-card-footer"></div>
   </div>
 
-  <!-- CARD 7: NIGHTMARE CALLS -->
+  <!-- CARD 7: RASHMI THE SNIPER -->
   <div class="stat-card">
-    <div class="stat-card-label">😬 Worst Individual Predictions — Nightmare Calls</div>
+    <div class="stat-card-label">🎯 The Part-Timer's Resume — Rashmi by the Numbers</div>
     <table class="stat-card-table">
-      <thead>
-        <tr><th>Player</th><th>Match</th><th style="text-align:right">Predicted</th><th style="text-align:right">Actual</th></tr>
-      </thead>
+      <thead><tr><th>Rashmi's exact scores</th><th style="text-align:right">Called</th><th style="text-align:right">Actual</th></tr></thead>
       <tbody>
-        <tr><td>Rashmi Shetye</td><td>CAN-QAT (#27)</td><td class="num">1–3</td><td class="num">6–0</td></tr>
-        <tr><td>Rashmi Shetye</td><td>SUI-BIH (#26)</td><td class="num">3–4</td><td class="num">4–1</td></tr>
-        <tr><td>Sneha Yajnik</td><td>IRQ-NOR (#18)</td><td class="num">0–0</td><td class="num">1–4</td></tr>
-        <tr><td>Chandramouli S</td><td>AUT-JOR (#20)</td><td class="num">0–0</td><td class="num">3–1</td></tr>
-        <tr><td>Yogendra Karmali</td><td>FRA-SEN (#17)</td><td class="num">1–2</td><td class="num">3–1</td></tr>
+        <tr><td>KOR-CZE (#2)</td><td class="num">2–1</td><td class="num">2–1 ✓</td></tr>
+        <tr><td>BRA-HAI (#31)</td><td class="num">3–0</td><td class="num">3–0 ✓</td></tr>
+        <tr><td>GER-CIV (#34)</td><td class="num">2–1</td><td class="num">2–1 ✓</td></tr>
+        <tr><td>JPN-SWE (#57)</td><td class="num">1–1</td><td class="num">1–1 ✓</td></tr>
       </tbody>
     </table>
-    <div class="stat-card-narrative">Rashmi predicted Canada would lose to Qatar 1–3 — Canada won 6–0. That's the wrong winner and 7 goals off. Yogi's FRA-SEN call (1–2 Senegal) was the lone pick against France, costing him while Mangesh and Tushar both pocketed 5 pts with the exact 3–1. Mouli's 0–0 Austria-Jordan prediction aged terribly at 3–1.</div>
+    <div class="stat-card-narrative">Rashmi played 51 matches, skipped 21, and still hit 4 exact scores — one every 12.8 matches, a better rate than every full-time player. Her JPN-SWE 1–1 was a draw nobody else called exactly, and she's the only one who spotted the 1–1 at that. Her nightmare is a different story: she predicted Canada would lose to Qatar 1–3. Canada won 6–0. Seven goals off. Wrong winner. Iconic.</div>
+    <div class="stat-card-footer"></div>
   </div>
 
-  <!-- CARD 8: SNEHA PARADOX -->
+  <!-- CARD 8: UNANIMOUS HITS AND MISSES -->
   <div class="stat-card">
-    <div class="stat-card-label">🧩 Sneha's Paradox — Zero Exact Scores, Still 50 Points</div>
+    <div class="stat-card-label">🗳️ When the Group Agreed — The Good, the Bad, the Ugly</div>
     <table class="stat-card-table">
-      <thead>
-        <tr><th>Match</th><th style="text-align:right">Sneha predicted</th><th style="text-align:right">Actual</th><th style="text-align:right">Pts</th></tr>
-      </thead>
+      <thead><tr><th>Match</th><th style="text-align:right">Consensus</th><th style="text-align:right">Outcome</th></tr></thead>
       <tbody>
-        <tr><td>CIV-ECU (#11)</td><td class="num">2–1</td><td class="num">1–0</td><td class="num">3</td></tr>
-        <tr><td>ENG-CRO (#22)</td><td class="num">3–1</td><td class="num">4–2</td><td class="num">3</td></tr>
-        <tr><td>UZB-COL (#24)</td><td class="num">1–2</td><td class="num">1–3</td><td class="num">3</td></tr>
-        <tr><td>SCO-MAR (#30)</td><td class="num">1–2</td><td class="num">0–1</td><td class="num">3</td></tr>
-        <tr><td>BRA-HAI (#31)</td><td class="num">4–0</td><td class="num">3–0</td><td class="num">3</td></tr>
+        <tr><td>GER-CIV (#34)</td><td class="num">Germany win</td><td class="num"><span class="badge badge-teal">✓ 23 pts</span></td></tr>
+        <tr><td>PAN-ENG (#67)</td><td class="num">England win</td><td class="num"><span class="badge badge-teal">✓ 21 pts</span></td></tr>
+        <tr><td>ARG-AUT (#41)</td><td class="num">Argentina win</td><td class="num"><span class="badge badge-teal">✓ 18 pts</span></td></tr>
+        <tr><td>ECU-GER (#56)</td><td class="num">Germany win</td><td class="num"><span class="badge badge-red">✗ 0 pts</span></td></tr>
+        <tr><td>ESP-CPV (#13)</td><td class="num">Spain win</td><td class="num"><span class="badge badge-red">✗ 5 pts (1 each)</span></td></tr>
+        <tr><td>BRA-MAR (#6)</td><td class="num">Brazil win</td><td class="num"><span class="badge badge-red">✗ 5 pts (1 each)</span></td></tr>
       </tbody>
     </table>
-    <div class="stat-card-narrative">Sneha is the queen of the near-miss. She's never hit an exact score in 33 matches, yet racked up 50 pts by repeatedly getting the winner right with a close margin. Her ENG-CRO 3–1 vs actual 4–2 and UZB-COL 1–2 vs actual 1–3 are maddening — one goal away from 5 pts, settling for 3 every time.</div>
+    <div class="stat-card-narrative">The group got 14 unanimous calls right and 3 wrong. The ECU-GER collapse was historic — 100% convinced Germany would win and score multiple goals, then watched Ecuador casually win 2–1. ESP-CPV ended 0–0 when Spain somehow failed to score against Cape Verde; everyone got 1 pity point for calling the right team. BRA-MAR was Brazil's turn to disappoint: a 1–1 draw when the whole group expected a rout.</div>
+    <div class="stat-card-footer"></div>
   </div>
 
 </div>
